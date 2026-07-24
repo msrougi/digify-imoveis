@@ -1,0 +1,12 @@
+{
+  "name": "digify-imoveis",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Site estático da Digify Imóveis — imoveis.digify.live",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "materia": "node scripts/gerar-pauta.mjs"
+  },
+  "engines": { "node": ">=18" }
+}
