@@ -135,7 +135,7 @@ nav{
 .cd-sep{font-family:var(--display);font-size:1.4rem;color:var(--gold);opacity:.6;margin-top:-14px}
 
 /* ============================================================ DIFERENCIAIS */
-.diff-heading{font-family:var(--display);font-size:1.5rem;font-weight:700;color:var(--navy);margin-top:52px;padding-bottom:14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px}
+.diff-heading{font-family:var(--display);font-size:clamp(1.9rem,3vw,2.6rem);font-weight:900;color:var(--navy);margin-top:52px;display:flex;align-items:center;gap:20px}
 .diff-heading::after{content:"";flex:1;height:1px;background:var(--line)}
 .diff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:26px;background:var(--line);border:1px solid var(--line)}
 .diff-card{background:var(--paper);padding:38px 34px;transition:background .25s}
