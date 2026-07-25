@@ -1,0 +1,10 @@
+Coloque nesta pasta as 3 fotos dos depoimentos, com estes nomes EXATOS:
+
+  depoimento-1.jpg   (Carlos Mendes — homem branco)
+  depoimento-2.jpg   (Ana Rodrigues — mulher)
+  depoimento-3.jpg   (Rafael Ferreira — homem negro)
+
+Dica: fotos quadradas ou de rosto centralizado (o site corta em círculo).
+Tamanho pequeno (~640px) já basta. Baixe do Unsplash pelo botão Download.
+
+Pode apagar este arquivo depois de colocar as fotos.

@@ -107,6 +107,9 @@ const cabeca = ({ titulo, descricao, url, imagem, tipo = 'website', jsonld = '' 
 <meta name="twitter:image" content="${SITE}${imagem}">
 <meta name="theme-color" content="#08172B">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="alternate icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="alternate" type="application/rss+xml" title="${NOME} — Blog" href="${SITE}/blog/rss.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

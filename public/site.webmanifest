@@ -1,0 +1,11 @@
+{
+  "name": "Digify Imóveis",
+  "short_name": "Digify Imóveis",
+  "icons": [
+    { "src": "/favicon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "/favicon-512.png", "type": "image/png", "sizes": "512x512" }
+  ],
+  "theme_color": "#0E1B2C",
+  "background_color": "#0E1B2C",
+  "display": "standalone"
+}

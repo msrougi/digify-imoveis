@@ -24,6 +24,9 @@
 
 <meta name="theme-color" content="#08172B">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="alternate icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -175,8 +178,10 @@
 
       <a class="card" href="/coliseu-funchal/">
         <div class="card-media">
-          <!-- Substitua pela foto real do empreendimento: /img/coliseu-funchal.jpg -->
-          <img src="/img/coliseu-funchal.jpg" width="900" height="563" loading="lazy" decoding="async" alt="Fachada do Coliseu Funchal, edifício residencial na Vila Olímpia, São Paulo">
+          <picture>
+            <source srcset="/img/coliseu-funchal.webp" type="image/webp">
+            <img src="/img/coliseu-funchal.jpg" width="900" height="563" loading="lazy" decoding="async" alt="Fachada do Coliseu Funchal, edifício residencial na Vila Olímpia, São Paulo">
+          </picture>
           <span class="badge">Ativo</span>
         </div>
         <div class="card-body">
