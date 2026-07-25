@@ -6,7 +6,7 @@ data: "2026-07-24"
 categoria: "Empreendimentos"
 imagem: "/img/blog/coliseu-funchal.jpg"
 imagemAlt: "Edifício residencial na Vila Olímpia, São Paulo, visto da rua"
-imovelUrl: "https://imoveis.digify.live/coliseu-funchal"
+imovelUrl: "https://imoveis.digify.live/coliseu-funchal/"
 imovelNome: "Coliseu Funchal"
 revisadoPor: "Marcelo Srougi"
 ---
@@ -45,6 +45,6 @@ Apartamento de 2 dormitórios, pronto para morar, com planta funcional e área d
 
 A página do empreendimento tem galeria completa, comparativo de localização e agendamento de visita direto com o corretor.
 
-> [Ver a página completa do Coliseu Funchal](https://imoveis.digify.live/coliseu-funchal)
+> [Ver a página completa do Coliseu Funchal](https://imoveis.digify.live/coliseu-funchal/)
 
 Se você está avaliando a região e quer conversar sobre o que faz sentido para o seu caso, fale com a gente pelo WhatsApp. Sem cadastro em portal, sem o seu contato sendo repassado para cinco corretores.
