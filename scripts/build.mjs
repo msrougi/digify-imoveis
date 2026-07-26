@@ -89,6 +89,9 @@ const cabeca = ({ titulo, descricao, url, imagem, tipo = 'website', jsonld = '' 
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2TX5DYEL2K"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-2TX5DYEL2K');</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${escapar(titulo)}</title>
 <meta name="description" content="${escapar(descricao)}">
