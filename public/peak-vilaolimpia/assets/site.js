@@ -7,7 +7,7 @@
 
   const testimonialList = document.querySelector(".testimonial-list");
   if (testimonialList && testimonialList.children.length === 2) {
-    testimonialList.insertAdjacentHTML("beforeend", `<article class="testimonial-card"><div class="portrait portrait-three" role="img" aria-label="Mulher em ambiente profissional"></div><div><div class="stars" aria-label="5 de 5 estrelas">★★★★★</div><blockquote>“Gostei de poder comparar um studio enxuto com plantas maiores no mesmo endereço. A localização permite pensar no imóvel tanto para uso próprio quanto para uma estratégia patrimonial.”</blockquote><p><strong>André L.</strong><span>Consultor de negócios</span></p></div></article>`);
+    testimonialList.insertAdjacentHTML("beforeend", `<article class="testimonial-card"><div class="portrait portrait-three" role="img" aria-label="Mulher em ambiente profissional"></div><div><div class="stars" aria-label="5 de 5 estrelas">★★★★★</div><blockquote>“Gostei de poder comparar um studio enxuto com plantas maiores no mesmo endereço. A localização permite pensar no imóvel tanto para uso próprio quanto para uma estratégia patrimonial.”</blockquote><p><strong>Fernanda L.</strong><span>Consultora de negócios</span></p></div></article>`);
     const heading = document.querySelector(".testimonial-heading > p:last-child");
     if (heading) heading.textContent = "Três perfis que enxergam valor no Peak por razões diferentes: praticidade para morar, flexibilidade e demanda qualificada para investir.";
     testimonialList.insertAdjacentHTML("afterend", '<p class="testimonial-note">Depoimentos ilustrativos para validação do layout. Substituir por relatos autorizados antes da campanha definitiva.</p>');
