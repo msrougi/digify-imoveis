@@ -15,7 +15,7 @@
 
   const faq = document.querySelector(".faq");
   if (faq && !document.querySelector(".related-reading")) {
-    faq.insertAdjacentHTML("beforebegin", `<section class="related-reading" aria-labelledby="conteudos-peak"><div><p class="eyebrow">Guia para decidir</p><h2 id="conteudos-peak">Leia antes de escolher.</h2></div><div class="related-links"><a href="/blog/peak-vila-olimpia-plantas-lazer-localizacao"><span>Empreendimento</span><strong>Peak Vila Olímpia: plantas, lazer e localização</strong><b>→</b></a><a href="/blog/apartamento-em-frente-ao-insper-vila-olimpia"><span>Localização</span><strong>Apartamento em frente ao Insper: o que muda</strong><b>→</b></a><a href="/blog/studio-vila-olimpia-para-investir"><span>Investimento</span><strong>Studio na Vila Olímpia para investir: como avaliar</strong><b>→</b></a></div></section>`);
+    faq.insertAdjacentHTML("beforebegin", `<section class="related-reading" aria-labelledby="conteudos-peak"><div><p class="eyebrow">Guia para decidir</p><h2 id="conteudos-peak">Leia antes de investir.</h2></div><div class="related-links"><a href="/blog/studio-vila-olimpia-para-investir"><span>Investimento</span><strong>Studio na Vila Olímpia para investir: como avaliar</strong><b>→</b></a></div></section>`);
   }
 
   const scrollToForm = () => formSection?.scrollIntoView({ behavior: "smooth" });
