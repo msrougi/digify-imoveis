@@ -140,7 +140,7 @@ IMAGENS E PDF
 4. Priorize imagens oficiais no hero, galeria, localização, plantas e CTA final. Inclua uma nota discreta informando que perspectivas e plantas vêm do material de divulgação.
 5. Crie lightbox funcional para galeria e plantas.
 6. As fotos de pessoas dos depoimentos devem ser exclusivas desta página: nunca reutilize retratos presentes em WELL Perdizes, Peak Vila Olímpia ou qualquer outro imóvel do domínio.
-7. Enquadre cada rosto individualmente em desktop e celular. Use crop focado no rosto, object-position/background-position específico por foto e uma zona segura que preserve cabelo, testa, olhos, queixo e laterais da face.
+7. Enquadre cada rosto individualmente em desktop e celular. Use crop focado no rosto, object-position/background-position específico por foto e uma zona segura que preserve cabelo, testa, olhos, queixo e laterais da face. No celular, mantenha o container da foto próximo da proporção original do retrato; não comprima uma foto vertical em uma faixa horizontal baixa.
 8. Verifique visualmente os três retratos em viewport desktop de 1440 px e celular de 390 px. Não publique nenhum rosto cortado, escondido por overlay ou deslocado para fora do card.
 
 PÚBLICO, COPY E ESTRATÉGIA

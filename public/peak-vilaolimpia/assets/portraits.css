@@ -16,8 +16,8 @@
 
 @media (max-width: 560px) {
   .portrait {
-    min-height: 280px;
-    background-position: 50% 18%;
+    min-height: clamp(350px, 110vw, 440px);
+    background-position: 50% 50%;
     background-size: cover;
   }
 }
