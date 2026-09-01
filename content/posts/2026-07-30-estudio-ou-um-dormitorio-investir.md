@@ -29,4 +29,4 @@ Não há resposta única, e desconfie de quem der uma. O studio costuma ter rent
 
 ## O que realmente decide
 
-Mais importante que o tipo é a **localização** e a **qualidade da planta**. Um studio bem resolvido perto de uma universidade aluga melhor que um dormitório mal desenhado longe de tudo. Por isso vale olhar empreendimentos que oferecem as duas opções no mesmo endereço — o [Well Perdizes](https://imoveis.digify.live/well-perdizes/), por exemplo, tem studios e dormitórios na mesma localização, o que permite comparar as plantas lado a lado antes de decidir.
+Mais importante que o tipo é a **localização** e a **qualidade da planta**. Um studio bem resolvido perto de uma universidade pode competir melhor que um dormitório mal desenhado longe de tudo. Por isso vale olhar empreendimentos que permitem comparar públicos e plantas: o [Well Perdizes](https://imoveis.digify.live/well-perdizes/) reúne studios e dormitórios em Perdizes, enquanto o [Peak Vila Olímpia](https://imoveis.digify.live/peak-vilaolimpia/) combina studios de 25 e 26 m² com opções de 2 dormitórios em frente ao Insper.

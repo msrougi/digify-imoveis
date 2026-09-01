@@ -19,12 +19,14 @@
   const $ = selector => document.querySelector(selector);
   const bairro = $("#bairro"), pdf = $("#pdf"), slug = $("#slug"), upload = $("#pdf-upload");
   const form = $("#site-form"), output = $("#output"), promptEl = $("#prompt");
+  const articlePanel = $("#article-panel"), articleIdeas = $("#article-ideas");
   let current = null, uploadedName = "";
 
   const normalize = value => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
   const slugify = value => normalize(value).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const heatIndex = score => score >= 85 ? 4 : score >= 70 ? 3 : score >= 50 ? 2 : score >= 30 ? 1 : 0;
   const formatNumber = n => typeof n === "number" ? new Intl.NumberFormat("pt-BR").format(n) : n;
+  const escapeHtml = value => String(value).replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[char]);
 
   [...new Set(catalog.map(item => item.bairro))].sort().forEach(name => {
     const option = document.createElement("option"); option.value = name; $("#bairros").append(option);
@@ -36,7 +38,7 @@
     pdf.innerHTML = matches.length ? '<option value="">Selecione o PDF</option>' : '<option value="">Nenhum PDF catalogado — envie outro abaixo</option>';
     matches.forEach(item => { const option = document.createElement("option"); option.value = item.id; option.textContent = `${item.name} · entrega ${item.delivery}`; pdf.append(option); });
     pdf.disabled = !matches.length;
-    current = null; renderHeat(null);
+    current = null; renderHeat(null); renderArticleIdeas(null);
   }
 
   bairro.addEventListener("input", filterPdfs);
@@ -45,14 +47,34 @@
     current = catalog.find(item => item.id === pdf.value) || null;
     uploadedName = "";
     upload.value = ""; upload.closest(".upload").classList.remove("has-file");
-    if (current) { slug.value = slugify(current.name); renderHeat(current); await requestLiveInsights(current); }
+    if (current) { slug.value = slugify(current.name); renderHeat(current); renderArticleIdeas(current); await requestLiveInsights(current); }
   });
   upload.addEventListener("change", () => {
     const file = upload.files[0]; if (!file) return;
     uploadedName = file.name; current = { name:file.name.replace(/\.pdf$/i,""), bairro:bairro.value || "A definir", pdf:file.name, delivery:"a confirmar", heat:50, searches:"a medir", competition:"a medir", summary:"PDF enviado manualmente; análise real depende da conexão com o Google." };
     upload.closest(".upload").classList.add("has-file"); upload.nextElementSibling.textContent = `✓ ${file.name}`;
-    slug.value = slugify(current.name); renderHeat(current);
+    slug.value = slugify(current.name); renderHeat(current); renderArticleIdeas(current);
   });
+
+  function createArticleIdeas(item) {
+    if (!item) return [];
+    const region = bairro.value.trim() || item.bairro || "São Paulo";
+    const type = form.querySelector('input[name="tipologia"]:checked')?.value || "apartamentos";
+    return [
+      { intent:"Localização", title:`Como é morar em ${region}: mobilidade, serviços e rotina perto do ${item.name}`, slug:slugify(`morar-em-${region}-perto-do-${item.name}`) },
+      { intent:"Empreendimento", title:`${item.name}: plantas, lazer, diferenciais e o que confirmar antes de comprar`, slug:slugify(`${item.name}-plantas-lazer-diferenciais`) },
+      { intent:"Decisão", title:`${type} em ${region}: para quem o ${item.name} faz sentido`, slug:slugify(`${type}-${region}-${item.name}`) }
+    ];
+  }
+
+  function renderArticleIdeas(item) {
+    if (!item) { articlePanel.hidden = true; articleIdeas.replaceChildren(); return; }
+    const ideas = createArticleIdeas(item);
+    articleIdeas.innerHTML = ideas.map((idea,index) => `<article class="article-idea"><b>0${index+1}</b><div><strong>${escapeHtml(idea.title)}</strong><span>${escapeHtml(idea.intent)} · /blog/${escapeHtml(idea.slug)}</span></div></article>`).join("");
+    articlePanel.hidden = false;
+  }
+
+  form.querySelectorAll('input[name="fase"],input[name="tipologia"]').forEach(input => input.addEventListener("change", () => renderArticleIdeas(current)));
 
   function renderHeat(item, live) {
     const card = $("#heat-card"), scale = document.querySelectorAll(".heat-scale span");
@@ -86,6 +108,7 @@
   function buildPrompt(data) {
     const item = current;
     const heat = labels[heatIndex(item.heat)];
+    const ideas = createArticleIdeas(item);
     return `Crie e publique uma landing page imobiliária completa para o empreendimento abaixo, seguindo integralmente o playbook da Digify Imóveis.
 
 DADOS DE ENTRADA
@@ -116,6 +139,9 @@ IMAGENS E PDF
 3. Converta para WebP, comprima sem perda visual importante, use nomes SEO e mantenha fallback quando necessário.
 4. Priorize imagens oficiais no hero, galeria, localização, plantas e CTA final. Inclua uma nota discreta informando que perspectivas e plantas vêm do material de divulgação.
 5. Crie lightbox funcional para galeria e plantas.
+6. As fotos de pessoas dos depoimentos devem ser exclusivas desta página: nunca reutilize retratos presentes em WELL Perdizes, Peak Vila Olímpia ou qualquer outro imóvel do domínio.
+7. Enquadre cada rosto individualmente em desktop e celular. Use crop focado no rosto, object-position/background-position específico por foto e uma zona segura que preserve cabelo, testa, olhos, queixo e laterais da face.
+8. Verifique visualmente os três retratos em viewport desktop de 1440 px e celular de 390 px. Não publique nenhum rosto cortado, escondido por overlay ou deslocado para fora do card.
 
 PÚBLICO, COPY E ESTRATÉGIA
 1. Defina o público-alvo antes de escrever: moradia, investidor, família, primeira compra, estudante, executivo ou combinação coerente.
@@ -136,6 +162,7 @@ ESTRUTURA MÍNIMA DA PÁGINA
 - Exatamente 3 depoimentos em cards, nunca 2.
 - Depoimentos provisórios e editáveis, coerentes com três perfis reais de público; não apresentá-los como relatos reais até serem substituídos por depoimentos autorizados.
 - Usar fotos de pessoas reais da Unsplash como background, sem links de referência visíveis na interface.
+- As 3 fotos devem ser diferentes entre si e diferentes das usadas em todas as outras páginas imobiliárias do site.
 - Seção de plantas oficiais com todas as opções pertinentes.
 - Formulário completo.
 - FAQ com pelo menos cinco perguntas específicas.
@@ -167,6 +194,19 @@ SEO E DESCOBERTA
 6. Atualizar o JSON-LD ItemList da Home, posições e quantidade sem remover os imóveis existentes.
 7. Não alterar artigos ou páginas que não façam parte do projeto.
 
+MATÉRIAS DE APOIO E LINKAGEM INTERNA — OBRIGATÓRIO
+Depois de ler integralmente o PDF e concluir a pesquisa, refine e publique exatamente 3 matérias no blog para formar um cluster em torno da landing page. As sugestões iniciais são:
+${ideas.map((idea,index) => `${index+1}. [${idea.intent}] ${idea.title}\n   Slug inicial: ${idea.slug}`).join("\n")}
+
+Regras editoriais das três matérias:
+1. Separar claramente as intenções: uma matéria sobre localização e rotina; uma sobre o edifício, plantas e diferenciais; uma sobre decisão de moradia ou investimento ligada à tipologia prioritária.
+2. Usar apenas fatos confirmados no PDF e em fontes atuais. Não inventar preços, valorização, rentabilidade, distâncias ou disponibilidade.
+3. Cada matéria deve ter title e descrição próprios, front matter compatível com content/posts, imagem oficial pertinente, 700 a 1.000 palavras e linguagem direta da Digify Imóveis.
+4. Incluir imovelUrl apontando para https://imoveis.digify.live/${data.slug}/ e imovelNome com o nome correto do empreendimento.
+5. Linkar naturalmente para a landing page em todas as três matérias; cruzar as matérias entre si quando útil e adicionar links vindos de artigos existentes realmente relacionados.
+6. Evitar canibalização: não repetir o mesmo título, palavra-chave principal ou argumento central nas três matérias.
+7. Rodar o build para que as matérias entrem na página /blog/, sitemap e RSS.
+
 GOOGLE ADS E SEARCH CONSOLE
 - Se a integração estiver conectada, consultar Google Ads Keyword Planner para: nome exato, nome + bairro, apartamentos + bairro, lançamento + bairro, tipologia + bairro e variações de alta intenção.
 - Coletar média mensal dos últimos 12 meses, tendência mensal, concorrência, índice de concorrência e faixas de lance.
@@ -187,7 +227,9 @@ VALIDAÇÃO ANTES DE PUBLICAR
 3. Testar desktop e mobile, formulário, WhatsApp, lightbox, popup, FAQ, navegação e estados de erro/sucesso.
 4. Confirmar exatamente 3 depoimentos.
 5. Verificar que não há assets quebrados, conteúdo cortado, scroll horizontal ou texto ilegível.
-6. Só então publicar no main e verificar a URL ao vivo.
+6. Conferir no DOM e visualmente que os 3 rostos estão inteiros em 1440 px e 390 px e que nenhum retrato já aparece em outro imóvel do domínio.
+7. Confirmar que as 3 matérias aparecem no blog, apontam para o imóvel e estão no sitemap.
+8. Só então publicar no main e verificar a URL ao vivo.
 
 ENTREGA
 Faça o trabalho completo agora: pesquisa, tratamento das imagens do PDF, implementação, integração na Home, testes e publicação. Ao final, informe a URL publicada, os principais fatos confirmados, o que foi extraído do PDF, os testes executados e qualquer dado que ainda dependa de confirmação comercial.`;

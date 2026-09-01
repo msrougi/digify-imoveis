@@ -53,6 +53,8 @@ Três testes práticos antes de fechar:
 - Volte à noite, de preferência numa sexta, e ouça a rua da janela do apartamento.
 - Peça o valor do condomínio e a última ata de assembleia. Prédio com lazer grande e poucas unidades tem rateio pesado.
 
+Dois imóveis ajudam a enxergar como a rua muda a proposta dentro do mesmo bairro. O [Peak Vila Olímpia](https://imoveis.digify.live/peak-vilaolimpia/) fica na Rua Quatá, em frente ao Insper, com studios e apartamentos de 2 dormitórios. O [Coliseu Funchal](https://imoveis.digify.live/coliseu-funchal/) prioriza a proximidade imediata da estação. A escolha depende do trajeto que você realmente fará.
+
 ---
 
 Anunciamos imóveis da Vila Olímpia e região com página própria e SEO técnico. Se você tem um imóvel na região para vender, [fale com a gente](https://imoveis.digify.live/#anunciar).

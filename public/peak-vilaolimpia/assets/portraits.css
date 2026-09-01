@@ -1,0 +1,62 @@
+/* Retratos exclusivos do Peak com recorte seguro para o rosto. */
+.portrait-one {
+  background-image: linear-gradient(#0000 55%, #0000005c), url("https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&crop=faces&w=900&h=1100&q=86");
+  background-position: 50% 22%;
+}
+
+.portrait-two {
+  background-image: linear-gradient(#0000 55%, #0000005c), url("https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&crop=faces&w=900&h=1100&q=86");
+  background-position: 50% 20%;
+}
+
+.portrait-three {
+  background-image: linear-gradient(#0000 55%, #0000005c), url("https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&crop=faces&w=900&h=1100&q=86");
+  background-position: 50% 20%;
+}
+
+@media (max-width: 560px) {
+  .portrait {
+    min-height: 280px;
+    background-position: 50% 18%;
+    background-size: cover;
+  }
+}
+
+.related-reading {
+  background: #e8e6df;
+  display: grid;
+  grid-template-columns: .65fr 1.35fr;
+  gap: 8vw;
+  padding: 95px 7vw;
+}
+
+.related-reading h2 {
+  font-size: clamp(42px, 5vw, 72px);
+  font-weight: 500;
+  letter-spacing: -.055em;
+  line-height: 1;
+  margin: 18px 0 0;
+}
+
+.related-links { border-top: 1px solid #1113; }
+.related-links a {
+  color: #11120f;
+  border-bottom: 1px solid #1113;
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: 20px;
+  align-items: center;
+  min-height: 92px;
+  text-decoration: none;
+}
+.related-links span { color: #657d2e; font-size: 9px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.related-links strong { font-size: 15px; line-height: 1.45; }
+.related-links b { color: #657d2e; font-size: 20px; }
+
+@media (max-width: 760px) {
+  .related-reading { grid-template-columns: 1fr; padding: 72px 5vw; }
+  .related-links a { grid-template-columns: 1fr auto; gap: 5px 16px; padding: 18px 0; }
+  .related-links span { grid-column: 1; }
+  .related-links strong { grid-column: 1; }
+  .related-links b { grid-column: 2; grid-row: 1 / 3; }
+}

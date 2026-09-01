@@ -83,8 +83,10 @@ Texto em markdown: 700 a 1000 palavras, com 3 a 5 subtítulos em "## ", listas c
 Termine com um parágrafo curto ligando ao serviço da Digify Imóveis e um link em markdown, escolhendo o mais adequado:
 - página de anúncio: https://imoveis.digify.live/#anunciar
 - imóvel Coliseu Funchal (2 dormitórios, Vila Olímpia, Rua Funchal, a 100 metros da estação): https://imoveis.digify.live/coliseu-funchal
+- imóvel WELL Perdizes (studios e apartamentos em Perdizes): https://imoveis.digify.live/well-perdizes/
+- imóvel Peak Vila Olímpia (studios e 2 dormitórios, Rua Quatá, em frente ao Insper): https://imoveis.digify.live/peak-vilaolimpia/
 
-Se o tema tiver relação com Vila Olímpia, Itaim Bibi, imóvel compacto ou proximidade de transporte, cite o Coliseu Funchal em um parágrafo e linke para ele.`;
+Se o tema tiver relação com Vila Olímpia, Itaim Bibi, imóvel compacto, Insper ou Rua Quatá, escolha entre Peak Vila Olímpia e Coliseu Funchal conforme a intenção da matéria. Não force os dois links quando apenas um for realmente pertinente.`;
 
 const PEDIDO = `Escreva a matéria de hoje.
 

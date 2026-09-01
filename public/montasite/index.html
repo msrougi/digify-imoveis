@@ -13,6 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/montasite/assets/montasite.css">
+  <link rel="stylesheet" href="/montasite/assets/articles.css">
 </head>
 <body>
   <main>
@@ -55,6 +56,12 @@
           <p class="google-note">Com Google Ads e Search Console conectados, os números passam a ser reais e exibem a data da coleta. Sem conexão, a temperatura é uma estimativa editorial para priorização.</p>
         </div>
 
+        <section class="article-panel" id="article-panel" hidden aria-live="polite">
+          <div class="article-head"><div><span>SEO</span><div><h3>3 matérias de apoio</h3><p>Sugeridas após selecionar e interpretar o material.</p></div></div><small>Cluster interno</small></div>
+          <div id="article-ideas" class="article-ideas"></div>
+          <p class="article-note">As pautas são refinadas pela leitura integral do PDF antes da publicação e devem apontar para a página do imóvel.</p>
+        </section>
+
         <button class="create" type="submit"><span>Criar site</span><b>→</b></button>
       </form>
 
@@ -65,8 +72,9 @@
           <li data-step="1"><i></i><div><strong>Ler o PDF</strong><span>Ficha, diferenciais, imagens e plantas</span></div></li>
           <li data-step="2"><i></i><div><strong>Analisar buscas</strong><span>Nome, bairro, intenção e concorrência</span></div></li>
           <li data-step="3"><i></i><div><strong>Definir estratégia</strong><span>Público, narrativa, SEO e conversão</span></div></li>
-          <li data-step="4"><i></i><div><strong>Montar o briefing</strong><span>Seções, CTAs, integrações e critérios</span></div></li>
-          <li data-step="5"><i></i><div><strong>Gerar prompt final</strong><span>Instrução completa pronta para o Codex</span></div></li>
+          <li data-step="4"><i></i><div><strong>Sugerir 3 matérias</strong><span>Localização, edifício e decisão de compra</span></div></li>
+          <li data-step="5"><i></i><div><strong>Montar o briefing</strong><span>Seções, CTAs, integrações e critérios</span></div></li>
+          <li data-step="6"><i></i><div><strong>Gerar prompt final</strong><span>Instrução completa pronta para o Codex</span></div></li>
         </ol>
         <div class="idle" id="idle"><span>PRONTO</span><p>Preencha os dados e clique em “Criar site”.</p></div>
       </aside>

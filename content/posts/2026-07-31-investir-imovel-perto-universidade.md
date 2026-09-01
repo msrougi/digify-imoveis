@@ -30,3 +30,5 @@ A diferença entre um bom e um mau investimento nesse nicho está nos detalhes. 
 ## Um exemplo prático
 
 Um empreendimento como o [Well Perdizes](https://imoveis.digify.live/well-perdizes/) reúne várias dessas condições: fica no entorno de três universidades, oferece tipologias compactas como studios e dormitórios, e tem a mobilidade que o público universitário valoriza. Serve bem para ilustrar como a estratégia funciona quando a localização coopera.
+
+Na Vila Olímpia, a lógica aparece com outro perfil de público. O [Peak Vila Olímpia](https://imoveis.digify.live/peak-vilaolimpia/) fica em frente ao Insper e próximo do polo corporativo, combinando possível demanda educacional e profissional. Ainda assim, a análise precisa considerar concorrência entre studios, custos mensais e regras de locação — proximidade ajuda, mas não elimina risco.

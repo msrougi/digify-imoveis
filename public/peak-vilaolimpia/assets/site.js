@@ -7,10 +7,15 @@
 
   const testimonialList = document.querySelector(".testimonial-list");
   if (testimonialList && testimonialList.children.length === 2) {
-    testimonialList.insertAdjacentHTML("beforeend", `<article class="testimonial-card"><div class="portrait portrait-three" role="img" aria-label="Homem em ambiente profissional" style="background-image:linear-gradient(0deg,rgba(0,0,0,.36),transparent 45%),url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=86')"></div><div><div class="stars" aria-label="5 de 5 estrelas">★★★★★</div><blockquote>“Gostei de poder comparar um studio enxuto com plantas maiores no mesmo endereço. A localização permite pensar no imóvel tanto para uso próprio quanto para uma estratégia patrimonial.”</blockquote><p><strong>André L.</strong><span>Consultor de negócios</span></p></div></article>`);
+    testimonialList.insertAdjacentHTML("beforeend", `<article class="testimonial-card"><div class="portrait portrait-three" role="img" aria-label="Mulher em ambiente profissional"></div><div><div class="stars" aria-label="5 de 5 estrelas">★★★★★</div><blockquote>“Gostei de poder comparar um studio enxuto com plantas maiores no mesmo endereço. A localização permite pensar no imóvel tanto para uso próprio quanto para uma estratégia patrimonial.”</blockquote><p><strong>André L.</strong><span>Consultor de negócios</span></p></div></article>`);
     const heading = document.querySelector(".testimonial-heading > p:last-child");
     if (heading) heading.textContent = "Três perfis que enxergam valor no Peak por razões diferentes: praticidade para morar, flexibilidade e demanda qualificada para investir.";
     testimonialList.insertAdjacentHTML("afterend", '<p class="testimonial-note">Depoimentos ilustrativos para validação do layout. Substituir por relatos autorizados antes da campanha definitiva.</p>');
+  }
+
+  const faq = document.querySelector(".faq");
+  if (faq && !document.querySelector(".related-reading")) {
+    faq.insertAdjacentHTML("beforebegin", `<section class="related-reading" aria-labelledby="conteudos-peak"><div><p class="eyebrow">Guia para decidir</p><h2 id="conteudos-peak">Leia antes de escolher.</h2></div><div class="related-links"><a href="/blog/peak-vila-olimpia-plantas-lazer-localizacao"><span>Empreendimento</span><strong>Peak Vila Olímpia: plantas, lazer e localização</strong><b>→</b></a><a href="/blog/apartamento-em-frente-ao-insper-vila-olimpia"><span>Localização</span><strong>Apartamento em frente ao Insper: o que muda</strong><b>→</b></a><a href="/blog/studio-vila-olimpia-para-investir"><span>Investimento</span><strong>Studio na Vila Olímpia para investir: como avaliar</strong><b>→</b></a></div></section>`);
   }
 
   const scrollToForm = () => formSection?.scrollIntoView({ behavior: "smooth" });
