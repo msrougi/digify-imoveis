@@ -14,5 +14,11 @@
       "binding": "MONTASITE_UPLOADS",
       "bucket_name": "digify-montasite-uploads"
     }
+  ],
+  "services": [
+    {
+      "binding": "MONTASITE_EMAIL_WORKER",
+      "service": "digify-montasite-email"
+    }
   ]
 }
