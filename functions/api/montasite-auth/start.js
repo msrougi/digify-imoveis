@@ -2,7 +2,7 @@ import { authConfig, challengeCookie, hashOtp, isSameOrigin, json, maskEmail, ve
 
 const genericFailure = () => json({ ok: false, error: "E-mail ou senha inválidos." }, 401);
 
-export async function onRequestPost({ request, env }) {
+async function startAuthentication({ request, env }) {
   if (!isSameOrigin(request)) return json({ ok: false, error: "Origem não autorizada." }, 403);
   const config = authConfig(env);
   if (!config.ready) return json({ ok: false, error: "Autenticação ainda não configurada no Cloudflare.", missing: config.missing }, 503);
@@ -78,4 +78,16 @@ export async function onRequestPost({ request, env }) {
 
   await env.MONTASITE_AUTH.delete(rateKey);
   return json({ ok: true, email: maskEmail(adminEmail), expiresIn: 600 }, 200, { "set-cookie": challengeCookie(challengeId) });
+}
+
+
+export async function onRequestPost(context) {
+  try {
+    return await startAuthentication(context);
+  } catch (error) {
+    // Never let an uncaught binding/runtime exception become an opaque HTML 500.
+    // The message is intentionally generic; the safe diagnostic stays in logs.
+    console.error("MontaSite auth start failed", error instanceof Error ? error.message : String(error));
+    return json({ ok: false, error: "Erro interno ao iniciar o acesso. Tente novamente em alguns instantes." }, 500);
+  }
 }
