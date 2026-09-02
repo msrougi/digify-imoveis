@@ -45,10 +45,9 @@ O domínio ou subdomínio usado em `MONTASITE_EMAIL_FROM` precisa estar verifica
 
 ## 4. Busca de PDFs e dados do Google
 
-Para busca externa de PDFs:
+Para busca externa de PDFs, configure `SERPER_API_KEY` como secret. O catálogo local continua funcionando quando a busca externa estiver indisponível.
 
-- `GOOGLE_SEARCH_API_KEY` (secret)
-- `GOOGLE_SEARCH_ENGINE_ID` (variável)
+O código aceita `GOOGLE_SEARCH_API_KEY` + `GOOGLE_SEARCH_ENGINE_ID` somente como compatibilidade para contas antigas do Custom Search JSON API. O Google fechou essa API para novos clientes e anunciou seu encerramento para janeiro de 2027; não a use em uma implantação nova.
 
 Para Google Ads e Search Console:
 
