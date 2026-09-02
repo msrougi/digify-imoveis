@@ -1,4 +1,5 @@
 const encoder = new TextEncoder();
+const MAX_PBKDF2_ITERATIONS = 100000;
 const COOKIE_SESSION = "digify_montasite_session";
 const COOKIE_CHALLENGE = "digify_montasite_challenge";
 
@@ -92,15 +93,19 @@ export const requireSession = async (context) => {
 export const verifyPassword = async (password, storedHash) => {
   const [algorithm, iterationsText, saltEncoded, hashEncoded, extra] = String(storedHash || "").split("$");
   const iterations = Number(iterationsText);
-  if (algorithm !== "pbkdf2" || !Number.isInteger(iterations) || iterations < 100000 || !saltEncoded || !hashEncoded || extra) return false;
-  const key = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
-  const derived = new Uint8Array(await crypto.subtle.deriveBits({
-    name: "PBKDF2",
-    salt: base64UrlToBytes(saltEncoded),
-    iterations,
-    hash: "SHA-256"
-  }, key, base64UrlToBytes(hashEncoded).length * 8));
-  return timingSafeEqual(derived, base64UrlToBytes(hashEncoded));
+  if (algorithm !== "pbkdf2" || !Number.isInteger(iterations) || iterations < 100000 || iterations > MAX_PBKDF2_ITERATIONS || !saltEncoded || !hashEncoded || extra) return false;
+  try {
+    const key = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
+    const derived = new Uint8Array(await crypto.subtle.deriveBits({
+      name: "PBKDF2",
+      salt: base64UrlToBytes(saltEncoded),
+      iterations,
+      hash: "SHA-256"
+    }, key, base64UrlToBytes(hashEncoded).length * 8));
+    return timingSafeEqual(derived, base64UrlToBytes(hashEncoded));
+  } catch {
+    return false;
+  }
 };
 
 export const hashOtp = (code, challengeId, secret) => hmac(secret, `${challengeId}:${code}`);

@@ -20,7 +20,7 @@ if (missingRequirements.length) {
   process.exit(1);
 }
 
-const iterations = 210000;
+const iterations = 100000;
 const salt = crypto.randomBytes(18);
 const passwordHash = crypto.pbkdf2Sync(password, salt, iterations, 32, "sha256");
 
