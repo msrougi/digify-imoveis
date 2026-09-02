@@ -324,7 +324,7 @@ ${NAV}
   </div>
 </section>
 <section class="blog-lista">
-  <div class="wrap"><div class="vitrine-grid">${cards}</div></div>
+  <div class="wrap"><div class="vitrine-grid">${cards}<!-- MONTASITE_DYNAMIC_ARTICLES --></div></div>
 </section>
 ${RODAPE}`;
 }

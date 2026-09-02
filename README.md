@@ -2,7 +2,7 @@
 
 Site estático da corretora digital da Digify. Home institucional + páginas de imóvel + blog com geração assistida por IA e revisão humana obrigatória.
 
-O painel privado de criação fica em `/montasite/`. A configuração de senha, código por e-mail, armazenamento e executor está documentada em [`MONTASITE_SETUP.md`](MONTASITE_SETUP.md).
+O painel privado de criação fica em `/montasite/`. A configuração de senha, código por e-mail, armazenamento e executor automático — que consome o prompt internamente — está documentada em [`MONTASITE_SETUP.md`](MONTASITE_SETUP.md).
 
 ---
 

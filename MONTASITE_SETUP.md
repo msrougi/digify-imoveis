@@ -59,16 +59,34 @@ Para Google Ads e Search Console:
 - `GOOGLE_ADS_LOGIN_CUSTOMER_ID` (somente se usar conta administradora)
 - `SEARCH_CONSOLE_SITE_URL=sc-domain:digify.live`
 
-## 5. Executor da criação
+## 5. Executor automático — o prompt é usado pelo próprio MontaSite
 
-O painel recebe e guarda o projeto, calcula o agendamento e acompanha eventos reais. Para executar leitura, criação e publicação, vincule o serviço executor:
+O painel recebe e guarda o projeto, calcula o agendamento e envia o prompt interno automaticamente para o Worker digify-montasite-pipeline. O usuário não precisa copiar nem colar o briefing.
 
-- `MONTASITE_PIPELINE_WEBHOOK`: URL HTTPS privada do executor.
-- `MONTASITE_PIPELINE_SECRET`: segredo compartilhado forte.
+- O Pages já declara o service binding MONTASITE_PIPELINE para esse Worker.
 
-O executor recebe o `jobId`, referências dos arquivos, payload, data editorial e `callbackUrl`. Ele deve enviar cada evento real para o callback usando `Authorization: Bearer <MONTASITE_PIPELINE_SECRET>`.
+O executor recebe o jobId, referências dos arquivos, payload, data editorial e callbackUrl e envia cada evento real para o callback usando Authorization: Bearer MONTASITE_PIPELINE_SECRET.
 
-Quando o callback recebe o evento `article_published`, valida que a URL é HTTPS em `imoveis.digify.live`, confirma que responde publicamente e só então envia o e-mail para `MONTASITE_ADMIN_EMAIL`.
+Na raiz do repositório, publique o Worker:
+
+    npx wrangler@latest deploy -c workers/montasite-pipeline/wrangler.jsonc
+
+Cadastre o mesmo segredo forte no Worker e no Pages:
+
+    PIPELINE_SECRET_VALUE="$(openssl rand -base64 36)"
+    printf '%s' "$PIPELINE_SECRET_VALUE" | npx wrangler@latest secret put MONTASITE_PIPELINE_SECRET -c workers/montasite-pipeline/wrangler.jsonc
+    printf '%s' "$PIPELINE_SECRET_VALUE" | npx wrangler@latest pages secret put MONTASITE_PIPELINE_SECRET --project-name digify-imoveis
+    unset PIPELINE_SECRET_VALUE
+
+Depois, faça um novo deploy do Pages para aplicar o binding e o roteamento dinâmico:
+
+    npx wrangler@latest pages deploy dist --project-name digify-imoveis
+
+O Worker usa o binding Workers AI (AI) para transformar a instrução e o material em conteúdo estruturado. Se a IA estiver indisponível, aplica uma saída de contingência segura, sem inventar dados, e continua o fluxo — o job não para na tela do prompt.
+
+O executor lê o PDF enviado no R2 (ou o link HTTPS selecionado), cria a página, publica a rota, atualiza o card da Home, deixa a matéria escolhida agendada entre 1 e 4 dias e publica a matéria quando o cron chegar.
+
+Quando o callback recebe article_published, valida a URL HTTPS em imoveis.digify.live e envia a notificação para MONTASITE_ADMIN_EMAIL pelo binding de e-mail já configurado (Resend continua como fallback).
 
 ## 6. Teste
 
@@ -88,4 +106,6 @@ Checklist:
 6. as três fotos quadradas são armazenadas no R2;
 7. a data da matéria aparece imediatamente;
 8. a barra avança apenas ao receber eventos persistidos;
-9. sair encerra a sessão.
+9. o prompt é enviado ao executor sem copiar e colar;
+10. a página e o card da Home aparecem quando o job chega à etapa de publicação;
+11. sair encerra a sessão.

@@ -19,6 +19,10 @@
     {
       "binding": "MONTASITE_EMAIL_WORKER",
       "service": "digify-montasite-email"
+    },
+    {
+      "binding": "MONTASITE_PIPELINE",
+      "service": "digify-montasite-pipeline"
     }
   ]
 }

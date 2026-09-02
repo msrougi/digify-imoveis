@@ -1,0 +1,24 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "digify-montasite-pipeline",
+  "main": "./index.js",
+  "compatibility_date": "2026-09-02",
+  "triggers": {
+    "crons": ["*/15 * * * *"]
+  },
+  "kv_namespaces": [
+    {
+      "binding": "MONTASITE_AUTH",
+      "id": "732dd07fea6d4c5186d950e38510bf72"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MONTASITE_UPLOADS",
+      "bucket_name": "digify-montasite-uploads"
+    }
+  ],
+  "ai": {
+    "binding": "AI"
+  }
+}

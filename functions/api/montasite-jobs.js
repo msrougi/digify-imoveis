@@ -1,4 +1,5 @@
 import { isSameOrigin, json, requireSession } from "../_shared/montasite-auth.js";
+import { buildMontaSitePrompt } from "../_shared/montasite-prompt.js";
 
 const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 const allowedSteps = new Set(["validate", "pdf", "research", "build", "publish", "article"]);
@@ -42,6 +43,10 @@ const jobResponse = job => ({
   currentStep: job.currentStep,
   events: job.events,
   articleSchedule: job.articleSchedule,
+  // The prompt is an internal executor instruction. Returning it to the
+  // authenticated operator keeps the panel's preview and the executor in
+  // sync, while the executor receives the same value server-side.
+  prompt: job.prompt || null,
   siteUrl: job.siteUrl || null,
   articleUrl: job.articleUrl || null,
   configuration: job.configuration || null,
@@ -82,6 +87,7 @@ export async function onRequest({ request, env, waitUntil }) {
   }
 
   const id = crypto.randomUUID(), now = new Date().toISOString(), schedule = articleSchedule();
+  const prompt = buildMontaSitePrompt(payload, schedule);
   const events = [
     { at: now, step: "validate", percent: 5, message: "Sessão e dados obrigatórios validados." },
     { at: now, step: "validate", percent: 10, message: "Três depoimentos e suas fotos foram conferidos." }
@@ -100,22 +106,53 @@ export async function onRequest({ request, env, waitUntil }) {
   }
   events.push({ at: new Date().toISOString(), step: "pdf", percent: 16, message: "Arquivos recebidos e armazenados com segurança." });
 
-  const pipelineReady = Boolean(env.MONTASITE_PIPELINE_WEBHOOK && env.MONTASITE_PIPELINE_SECRET);
+  const hasPipelineBinding = Boolean(env.MONTASITE_PIPELINE && typeof env.MONTASITE_PIPELINE.fetch === "function" && env.MONTASITE_PIPELINE_SECRET);
+  const hasPipelineWebhook = Boolean(env.MONTASITE_PIPELINE_WEBHOOK && env.MONTASITE_PIPELINE_SECRET);
+  const pipelineReady = hasPipelineBinding || hasPipelineWebhook;
   const job = {
     id, owner: session.email, createdAt: now, updatedAt: new Date().toISOString(),
     status: pipelineReady ? "queued" : "waiting_configuration", percent: pipelineReady ? 22 : 18,
-    currentStep: "pdf", articleSchedule: schedule, payload, storedFiles, events,
-    configuration: pipelineReady ? null : { missing: ["MONTASITE_PIPELINE_WEBHOOK", "MONTASITE_PIPELINE_SECRET"], message: "Projeto salvo. Conecte o executor para iniciar leitura, construção e publicação." }
+    currentStep: "pdf", articleSchedule: schedule, payload, prompt, storedFiles, events,
+    configuration: pipelineReady ? null : { missing: ["MONTASITE_PIPELINE", "MONTASITE_PIPELINE_SECRET"], message: "O prompt foi preparado, mas o executor automático ainda não está publicado." }
   };
   job.events.push({ at: job.updatedAt, step: "pdf", percent: job.percent, message: `Janela editorial reservada: ${schedule.delayDays} dia(s) depois, às ${schedule.local.slice(11,16)} (São Paulo).` });
   await env.MONTASITE_AUTH.put(`job:${id}`, JSON.stringify(job), { expirationTtl: 60 * 60 * 24 * 30 });
 
   if (pipelineReady) {
-    waitUntil(fetch(env.MONTASITE_PIPELINE_WEBHOOK, {
+    const body = JSON.stringify({
+      jobId: id,
+      payload,
+      prompt,
+      storedFiles,
+      articleSchedule: schedule,
+      callbackUrl: "https://imoveis.digify.live/api/montasite-job-event"
+    });
+    const init = {
       method: "POST",
-      headers: { authorization: `Bearer ${env.MONTASITE_PIPELINE_SECRET}`, "content-type": "application/json" },
-      body: JSON.stringify({ jobId: id, payload, storedFiles, articleSchedule: schedule, callbackUrl: `${new URL(request.url).origin}/api/montasite-job-event` })
-    }).catch(() => null));
+      headers: {
+        authorization: env.MONTASITE_PIPELINE_SECRET ? `Bearer ${env.MONTASITE_PIPELINE_SECRET}` : "",
+        "content-type": "application/json"
+      },
+      body
+    };
+    // Prefer a private service binding. The webhook remains supported for a
+    // separately hosted executor, but the normal path is now self-contained
+    // in Cloudflare and no longer depends on a browser-generated prompt.
+    const dispatch = hasPipelineBinding
+      ? env.MONTASITE_PIPELINE.fetch("https://montasite-pipeline.internal/run", init)
+      : fetch(env.MONTASITE_PIPELINE_WEBHOOK, init);
+    waitUntil(dispatch.then(response => {
+      if (!response?.ok) throw new Error("Executor respondeu HTTP " + response.status);
+    }).catch(async error => {
+      const current = await env.MONTASITE_AUTH.get(`job:${id}`, "json");
+      if (!current) return;
+      current.status = "failed";
+      current.updatedAt = new Date().toISOString();
+      current.configuration = { message: "O executor não respondeu. Tente novamente depois de conferir a publicação do pipeline." };
+      current.events = [...(current.events || []), { at: current.updatedAt, step: "validate", percent: 22, message: "Falha ao acionar o executor automático." }].slice(-80);
+      await env.MONTASITE_AUTH.put(`job:${id}`, JSON.stringify(current), { expirationTtl: 60 * 60 * 24 * 30 });
+      console.error("MontaSite pipeline dispatch failed", error instanceof Error ? error.message : String(error));
+    }));
   }
   return json({ ok: true, job: jobResponse(job) }, 201);
 }
