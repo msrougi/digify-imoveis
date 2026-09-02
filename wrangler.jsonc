@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "digify-imoveis",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-09-02",
+  "kv_namespaces": [
+    {
+      "binding": "MONTASITE_AUTH",
+      "id": "732dd07fea6d4c5186d950e38510bf72"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MONTASITE_UPLOADS",
+      "bucket_name": "digify-montasite-uploads"
+    }
+  ]
+}
