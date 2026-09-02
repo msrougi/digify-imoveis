@@ -113,16 +113,17 @@ export const maskEmail = email => {
 
 export const authConfig = env => {
   const hasNativeEmail = Boolean(env.MONTASITE_EMAIL && typeof env.MONTASITE_EMAIL.send === "function");
+  const hasEmailWorker = Boolean(env.MONTASITE_EMAIL_WORKER && typeof env.MONTASITE_EMAIL_WORKER.fetch === "function");
   const hasResendFallback = Boolean(env.RESEND_API_KEY && env.MONTASITE_EMAIL_FROM);
   return {
-    ready: Boolean(env.MONTASITE_AUTH && env.MONTASITE_ADMIN_EMAIL && env.MONTASITE_PASSWORD_HASH && env.MONTASITE_SESSION_SECRET && env.MONTASITE_OTP_SECRET && (hasNativeEmail || hasResendFallback)),
+    ready: Boolean(env.MONTASITE_AUTH && env.MONTASITE_ADMIN_EMAIL && env.MONTASITE_PASSWORD_HASH && env.MONTASITE_SESSION_SECRET && env.MONTASITE_OTP_SECRET && (hasNativeEmail || hasEmailWorker || hasResendFallback)),
     missing: [
     ["MONTASITE_AUTH", env.MONTASITE_AUTH],
     ["MONTASITE_ADMIN_EMAIL", env.MONTASITE_ADMIN_EMAIL],
     ["MONTASITE_PASSWORD_HASH", env.MONTASITE_PASSWORD_HASH],
     ["MONTASITE_SESSION_SECRET", env.MONTASITE_SESSION_SECRET],
     ["MONTASITE_OTP_SECRET", env.MONTASITE_OTP_SECRET],
-    ["MONTASITE_EMAIL", hasNativeEmail || hasResendFallback]
+    ["MONTASITE_EMAIL_WORKER", hasNativeEmail || hasEmailWorker || hasResendFallback]
   ].filter(([, value]) => !value).map(([name]) => name)
   };
 };

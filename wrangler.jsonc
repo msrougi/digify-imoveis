@@ -14,11 +14,5 @@
       "binding": "MONTASITE_UPLOADS",
       "bucket_name": "digify-montasite-uploads"
     }
-  ],
-  "send_email": [
-    {
-      "name": "MONTASITE_EMAIL",
-      "destination_address": "marcelo@digify.live"
-    }
   ]
 }

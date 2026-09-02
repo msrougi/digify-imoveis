@@ -1,0 +1,13 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "digify-montasite-email",
+  "main": "./index.js",
+  "compatibility_date": "2026-09-02",
+  "workers_dev": false,
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "destination_address": "marcelo@digify.live"
+    }
+  ]
+}

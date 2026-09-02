@@ -49,6 +49,13 @@ export async function onRequestPost({ request, env }) {
         html
       });
       sent = true;
+    } else if (env.MONTASITE_EMAIL_WORKER && typeof env.MONTASITE_EMAIL_WORKER.fetch === "function") {
+      const response = await env.MONTASITE_EMAIL_WORKER.fetch("https://montasite-email.internal/send", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ to: adminEmail, subject, text, html })
+      });
+      sent = response.ok;
     } else if (env.RESEND_API_KEY && env.MONTASITE_EMAIL_FROM) {
       const response = await fetch("https://api.resend.com/emails", {
         method: "POST",
