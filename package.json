@@ -6,7 +6,8 @@
   "description": "Site estático da Digify Imóveis — imoveis.digify.live",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "materia": "node scripts/gerar-pauta.mjs"
+    "materia": "node scripts/gerar-pauta.mjs",
+    "montasite:secrets": "node scripts/montasite-secrets.mjs"
   },
   "engines": { "node": ">=18" }
 }

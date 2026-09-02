@@ -1,249 +1,84 @@
 (() => {
   "use strict";
-
   const catalog = [
-    { id:"peak", name:"Peak Vila Olímpia", bairro:"Vila Olímpia", pdf:"Peak-Vila-Olimpia.pdf", delivery:"out/2027", heat:96, searches:"alto", competition:"Alta", summary:"Nome curto, bairro de forte intenção e produto com apelo para moradia e investimento." },
-    { id:"conceicao", name:"Mundo Apto Estação Conceição", bairro:"Vila Guarani / Conceição", pdf:"Mundo-Apto-Estacao-Conceicao.pdf", delivery:"ago/2028", heat:88, searches:"alto", competition:"Alta", summary:"Metrô, faixa acessível e combinação forte de nome do produto com intenção regional." },
-    { id:"ipiranga", name:"Mundo Apto Alto do Ipiranga", bairro:"Ipiranga", pdf:"Mundo-Apto-Alto-do-Ipiranga.pdf", delivery:"jul/2028", heat:84, searches:"médio/alto", competition:"Alta", summary:"Bairro consolidado, metrô e procura equilibrada entre moradia e investimento." },
-    { id:"artstone", name:"Art’Stone Itaim", bairro:"Itaim Bibi", pdf:"ArtStone-Itaim.pdf", delivery:"jul/2027", heat:81, searches:"médio", competition:"Alta", summary:"Menor volume absoluto, mas intenção premium e alto valor comercial por lead." },
-    { id:"campo-belo", name:"MAC Campo Belo", bairro:"Campo Belo", pdf:"MAC-Campo-Belo.pdf", delivery:"mai/2027", heat:79, searches:"médio/alto", competition:"Média/alta", summary:"Produto familiar em bairro consolidado com busca qualificada por plantas maiores." },
-    { id:"moema", name:"Autoral Moema", bairro:"Moema", pdf:"Autoral-Moema.pdf", delivery:"fev/2027", heat:83, searches:"médio/alto", competition:"Alta", summary:"Moema eleva a intenção regional e atrai público familiar de maior poder aquisitivo." },
-    { id:"mooca", name:"Vibra Mooca", bairro:"Mooca", pdf:"Vibra-Mooca-Book.pdf", delivery:"a confirmar", heat:76, searches:"médio/alto", competition:"Média", summary:"Bairro tradicional e faixa de entrada ampla; prazo precisa ser confirmado antes da publicação." },
-    { id:"lapa", name:"Mundo Apto Estação Lapa", bairro:"Lapa de Baixo", pdf:"Mundo-Apto-Estacao-Lapa.pdf", delivery:"set/2027", heat:75, searches:"médio", competition:"Média", summary:"Mobilidade ferroviária e produto comercial para busca por preço e localização." },
-    { id:"anima", name:"Ânima Vila Matilde", bairro:"Vila Matilde", pdf:"Anima-Vila-Matilde.pdf", delivery:"set/2028", heat:71, searches:"médio", competition:"Média", summary:"Faixa de entrada competitiva e bairro com público de primeira compra." },
-    { id:"pin", name:"Pin Estação Vila Sônia", bairro:"Vila Sônia", pdf:"Pin-Estacao-Vila-Sonia.pdf", delivery:"jan/2029", heat:73, searches:"médio", competition:"Média", summary:"Metrô e ciclo longo de campanha favorecem conteúdo contínuo de descoberta." },
-    { id:"livus", name:"Livus Vila Sônia", bairro:"Vila Sônia", pdf:"Livus-Vila-Sonia.pdf", delivery:"jan/2028", heat:67, searches:"médio/baixo", competition:"Média", summary:"Produto compacto de entrada com intenção de investidor e primeira compra." }
+    {id:"peak",name:"Peak Vila Olímpia",bairro:"Vila Olímpia",pdf:"Peak-Vila-Olimpia.pdf",delivery:"out/2027",types:["Studio / 1 dormitório","2 dormitórios"],heat:96,searches:"alto",competition:"Alta",summary:"Nome curto, bairro de forte intenção e produto com apelo para moradia e investimento."},
+    {id:"conceicao",name:"Mundo Apto Estação Conceição",bairro:"Vila Guarani / Conceição",pdf:"Mundo-Apto-Estacao-Conceicao.pdf",delivery:"ago/2028",types:["Studio / 1 dormitório","2 dormitórios"],heat:88,searches:"alto",competition:"Alta",summary:"Metrô, faixa acessível e combinação forte de nome do produto com intenção regional."},
+    {id:"ipiranga",name:"Mundo Apto Alto do Ipiranga",bairro:"Ipiranga",pdf:"Mundo-Apto-Alto-do-Ipiranga.pdf",delivery:"jul/2028",types:["Studio / 1 dormitório","2 dormitórios"],heat:84,searches:"médio/alto",competition:"Alta",summary:"Bairro consolidado, metrô e procura equilibrada entre moradia e investimento."},
+    {id:"artstone",name:"Art’Stone Itaim",bairro:"Itaim Bibi",pdf:"ArtStone-Itaim.pdf",delivery:"jul/2027",types:["2 dormitórios","3 dormitórios ou mais"],heat:81,searches:"médio",competition:"Alta",summary:"Menor volume absoluto, mas intenção premium e alto valor comercial por lead."},
+    {id:"campo-belo",name:"MAC Campo Belo",bairro:"Campo Belo",pdf:"MAC-Campo-Belo.pdf",delivery:"mai/2027",types:["2 dormitórios","3 dormitórios ou mais"],heat:79,searches:"médio/alto",competition:"Média/alta",summary:"Produto familiar em bairro consolidado com busca qualificada por plantas maiores."},
+    {id:"moema",name:"Autoral Moema",bairro:"Moema",pdf:"Autoral-Moema.pdf",delivery:"fev/2027",types:["2 dormitórios","3 dormitórios ou mais"],heat:83,searches:"médio/alto",competition:"Alta",summary:"Moema eleva a intenção regional e atrai público familiar de maior poder aquisitivo."},
+    {id:"mooca",name:"Vibra Mooca",bairro:"Mooca",pdf:"Vibra-Mooca-Book.pdf",delivery:"a confirmar",types:["Studio / 1 dormitório","2 dormitórios"],heat:76,searches:"médio/alto",competition:"Média",summary:"Bairro tradicional e faixa de entrada ampla; prazo precisa ser confirmado antes da publicação."},
+    {id:"lapa",name:"Mundo Apto Estação Lapa",bairro:"Lapa de Baixo",pdf:"Mundo-Apto-Estacao-Lapa.pdf",delivery:"set/2027",types:["Studio / 1 dormitório","2 dormitórios"],heat:75,searches:"médio",competition:"Média",summary:"Mobilidade ferroviária e produto comercial para busca por valor e localização."},
+    {id:"anima",name:"Ânima Vila Matilde",bairro:"Vila Matilde",pdf:"Anima-Vila-Matilde.pdf",delivery:"set/2028",types:["Studio / 1 dormitório","2 dormitórios"],heat:71,searches:"médio",competition:"Média",summary:"Faixa de entrada competitiva e bairro com público de primeira compra."},
+    {id:"pin",name:"Pin Estação Vila Sônia",bairro:"Vila Sônia",pdf:"Pin-Estacao-Vila-Sonia.pdf",delivery:"jan/2029",types:["Studio / 1 dormitório","2 dormitórios"],heat:73,searches:"médio",competition:"Média",summary:"Metrô e ciclo longo de campanha favorecem conteúdo contínuo de descoberta."},
+    {id:"livus",name:"Livus Vila Sônia",bairro:"Vila Sônia",pdf:"Livus-Vila-Sonia.pdf",delivery:"jan/2028",types:["Studio / 1 dormitório"],heat:67,searches:"médio/baixo",competition:"Média",summary:"Produto compacto de entrada com intenção de investidor e primeira compra."}
   ];
-  const labels = ["Gelado", "Frio", "Morno", "Quente", "Fervendo"];
-  const colors = ["#62a8ff", "#78c6e9", "#efc44d", "#ff8948", "#ff4d3d"];
-  const $ = selector => document.querySelector(selector);
-  const bairro = $("#bairro"), pdf = $("#pdf"), slug = $("#slug"), upload = $("#pdf-upload");
-  const form = $("#site-form"), output = $("#output"), promptEl = $("#prompt");
-  const articlePanel = $("#article-panel"), articleIdeas = $("#article-ideas");
-  let current = null, uploadedName = "";
+  const labels=["Gelado","Frio","Morno","Quente","Fervendo"], colors=["#5b8cff","#36b9db","#f0c84b","#ff8a45","#ff4f71"];
+  const $=selector=>document.querySelector(selector), $$=selector=>[...document.querySelectorAll(selector)];
+  const form=$("#site-form"), bairro=$("#bairro"), pdf=$("#pdf"), upload=$("#pdf-upload"), slug=$("#slug"), output=$("#output"), promptEl=$("#prompt");
+  let current=null, selectedFile=null, currentIdeas=[], pollTimer=null, renderedEvents=0;
+  const photoState=[null,null,null];
+  const normalize=value=>String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+  const slugify=value=>normalize(value).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  const escapeHtml=value=>String(value).replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[char]);
+  const heatIndex=score=>score>=85?4:score>=70?3:score>=50?2:score>=30?1:0;
+  const nowTime=()=>new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
 
-  const normalize = value => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-  const slugify = value => normalize(value).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  const heatIndex = score => score >= 85 ? 4 : score >= 70 ? 3 : score >= 50 ? 2 : score >= 30 ? 1 : 0;
-  const formatNumber = n => typeof n === "number" ? new Intl.NumberFormat("pt-BR").format(n) : n;
-  const escapeHtml = value => String(value).replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[char]);
+  [...new Set(catalog.flatMap(item=>item.bairro.split(" / ")))].sort().forEach(name=>{const option=document.createElement("option");option.value=name;$("#bairros").append(option);});
+  $("#testimonial-grid").innerHTML=[1,2,3].map(index=>`<article class="testimonial-card"><label class="testimonial-photo" id="photo-label-${index}"><input id="testimonial-photo-${index}" name="testimonial_photo_${index}" type="file" accept="image/jpeg,image/png,image/webp" required><img id="photo-preview-${index}" alt="Prévia da foto ${index}" hidden><span>Foto quadrada<br>da pessoa ${index}</span></label><label class="field"><span>Nome da pessoa</span><input id="testimonial-name-${index}" name="testimonial_name_${index}" maxlength="70" required></label><label class="field"><span>Depoimento</span><textarea id="testimonial-text-${index}" name="testimonial_text_${index}" maxlength="420" required></textarea></label></article>`).join("");
 
-  [...new Set(catalog.map(item => item.bairro))].sort().forEach(name => {
-    const option = document.createElement("option"); option.value = name; $("#bairros").append(option);
+  function addLog(message,type="info"){
+    const container=$("#log-lines"); if(container.children.length===1&&container.textContent.includes("Aguardando"))container.replaceChildren();
+    const line=document.createElement("p");line.dataset.type=type;line.innerHTML=`<time>${nowTime()}</time><span>${escapeHtml(message)}</span>`;container.append(line);container.scrollTop=container.scrollHeight;
+  }
+  function setProgress(percent,state="running"){$("#progress-value").textContent=`${percent}%`;$("#progress-bar").style.width=`${percent}%`;$("#job-state").className=state;$("#job-state").textContent=state==="error"?"ATENÇÃO":state==="done"?"CONCLUÍDO":"EM EXECUÇÃO";}
+  function markStep(key,state){const item=$(`#steps li[data-key="${key}"]`);if(item)item.className=state||"";}
+  function resetConsole(){if(pollTimer)clearTimeout(pollTimer);renderedEvents=0;$$('#steps li').forEach(item=>item.className="");$("#log-lines").replaceChildren();setProgress(0);$("#job-state").className="";$("#job-state").textContent="PRONTO";}
+  function selectedType(){return form.querySelector('input[name="tipologia"]:checked').value;}
+
+  async function searchPdfs(){
+    if(!bairro.value.trim()){bairro.reportValidity();return;}
+    $("#search-pdfs").disabled=true;addLog(`Buscando PDFs em ${bairro.value} para ${selectedType()}…`);let remote=[];
+    try{const response=await fetch(`/api/property-pdfs?bairro=${encodeURIComponent(bairro.value)}&tipologia=${encodeURIComponent(selectedType())}`);if(response.ok){const data=await response.json();remote=data.items||[];if(data.connected)addLog(`${remote.length} resultado(s) encontrado(s) na busca externa.`);}}
+    catch{/* usa catálogo verificado */}
+    const term=normalize(bairro.value), local=catalog.filter(item=>(normalize(item.bairro).includes(term)||term.includes(normalize(item.bairro)))&&item.types.includes(selectedType()));
+    const results=[...local,...remote.filter(item=>!local.some(localItem=>normalize(localItem.name)===normalize(item.name)))];
+    pdf.innerHTML='<option value="">Selecione o PDF</option>'+results.map((item,index)=>`<option value="${escapeHtml(item.id||`remote-${index}`)}">${escapeHtml(item.name)} · ${escapeHtml(item.delivery||"prazo a confirmar")}</option>`).join("");
+    pdf._results=results;$("#pdf-results").hidden=false;addLog(results.length?`${results.length} material(is) compatível(is) pronto(s) para seleção.`:"Nenhum PDF compatível no catálogo. Você pode enviar o material manualmente.",results.length?"info":"warning");$("#search-pdfs").disabled=false;
+  }
+
+  function selectProperty(item,file=null){current=item;selectedFile=file;slug.value=slugify(item.name);$("#project-section").hidden=false;$("#testimonials-section").hidden=false;$("#articles-section").hidden=false;renderHeat(item);renderIdeas(item);updateCreateState();requestLiveInsights(item);}
+  pdf.addEventListener("change",()=>{const item=(pdf._results||[]).find(candidate=>(candidate.id||"")===pdf.value);if(item){upload.value="";upload.closest(".upload").classList.remove("has-file");selectProperty(item);}});
+  upload.addEventListener("change",()=>{const file=upload.files[0];if(!file)return;if(file.type!=="application/pdf"||file.size>25*1024*1024){alert("Envie um PDF de até 25 MB.");upload.value="";return;}upload.closest(".upload").classList.add("has-file");upload.closest(".upload").querySelector("strong").textContent=`✓ ${file.name}`;selectProperty({id:"upload",name:file.name.replace(/\.pdf$/i,""),bairro:bairro.value,pdf:file.name,pdfUrl:null,delivery:"a confirmar",types:[selectedType()],heat:50,searches:"a medir",competition:"a medir",summary:"Material enviado manualmente; os dados serão confirmados durante a leitura."},file);});
+  $("#search-pdfs").addEventListener("click",searchPdfs);
+  form.querySelectorAll('input[name="tipologia"]').forEach(input=>input.addEventListener("change",()=>{$("#pdf-results").hidden=true;current=null;updateCreateState();}));
+
+  function renderHeat(item,live){const score=live?.score??item.heat??50,index=heatIndex(score),orb=$("#heat-orb");orb.style.setProperty("--score",score);orb.style.setProperty("--heat",colors[index]);$("#heat-score").textContent=score;$("#heat-label").textContent=labels[index];$("#heat-summary").textContent=live?.summary||item.summary;$$('.heat-scale span').forEach((span,i)=>span.classList.toggle("active",i===index));$("#m-searches").textContent=live?.monthlySearches??item.searches;$("#m-competition").textContent=live?.competition??item.competition;$("#m-impressions").textContent=live?.impressions??"sem dados";$("#m-position").textContent=live?.position?Number(live.position).toFixed(1):"sem dados";$("#data-source").textContent=live?`Google · ${new Date(live.collectedAt||Date.now()).toLocaleDateString("pt-BR")}`:"Estimativa Digify · conectar Google para dados reais";}
+  async function requestLiveInsights(item){try{const response=await fetch(`/api/search-insights?name=${encodeURIComponent(item.name)}&bairro=${encodeURIComponent(item.bairro)}&url=${encodeURIComponent(`https://imoveis.digify.live/${slug.value}/`)}`);if(!response.ok)return;const data=await response.json();if(data.connected){renderHeat(item,data);addLog("Dados reais do Google atualizados.");}}catch{/* mantém estimativa identificada */}}
+  function createIdeas(item){const region=bairro.value.trim()||item.bairro,type=selectedType();return[{intent:"Bairro e rotina",title:`Como é morar em ${region}: mobilidade, serviços e rotina perto do ${item.name}`,slug:slugify(`morar-em-${region}-perto-do-${item.name}`)},{intent:"Edifício",title:`${item.name}: plantas, lazer, diferenciais e o que confirmar antes de comprar`,slug:slugify(`${item.name}-plantas-lazer-diferenciais`)},{intent:"Decisão",title:`${type} em ${region}: para quem o ${item.name} faz sentido`,slug:slugify(`${type}-${region}-${item.name}`)}];}
+  function renderIdeas(item){currentIdeas=createIdeas(item);$("#article-ideas").innerHTML=currentIdeas.map((idea,index)=>`<label class="article-option"><input type="radio" name="article" value="${index}" ${index===0?"checked":""}><span><b>0${index+1}</b><span><strong>${escapeHtml(idea.title)}</strong><small>${escapeHtml(idea.intent)} · /blog/${escapeHtml(idea.slug)}</small></span><em>✓</em></span></label>`).join("");$$('input[name="article"]').forEach(input=>input.addEventListener("change",updateCreateState));}
+
+  [1,2,3].forEach(index=>{
+    $(`#testimonial-photo-${index}`).addEventListener("change",async event=>{const file=event.target.files[0];if(!file)return;const label=$(`#photo-label-${index}`),preview=$(`#photo-preview-${index}`);try{const bitmap=await createImageBitmap(file),width=bitmap.width,height=bitmap.height,ratio=width/height;bitmap.close();if(file.size>2*1024*1024||!['image/jpeg','image/png','image/webp'].includes(file.type)||ratio<.97||ratio>1.03||Math.min(width,height)<600)throw new Error("Use uma foto quadrada, mínimo 600×600 px e até 2 MB.");photoState[index-1]=file;preview.src=URL.createObjectURL(file);preview.hidden=false;label.classList.add("has-image");addLog(`Foto ${index} validada: formato quadrado e rosto será preservado no layout.`);}catch(error){event.target.value="";photoState[index-1]=null;preview.hidden=true;label.classList.remove("has-image");alert(error.message);}updateCreateState();});
+    $(`#testimonial-name-${index}`).addEventListener("input",updateCreateState);$(`#testimonial-text-${index}`).addEventListener("input",updateCreateState);
   });
+  function testimonials(){return [1,2,3].map(index=>({name:$(`#testimonial-name-${index}`).value.trim(),text:$(`#testimonial-text-${index}`).value.trim(),photoName:photoState[index-1]?.name||""}));}
+  function updateCreateState(){const article=form.querySelector('input[name="article"]:checked');const ready=current&&slug.value&&article&&photoState.every(Boolean)&&testimonials().every(item=>item.name&&item.text);$("#create-site").disabled=!ready;}
+  slug.addEventListener("input",updateCreateState);
 
-  function filterPdfs() {
-    const term = normalize(bairro.value);
-    const matches = catalog.filter(item => normalize(item.bairro).includes(term) || term.includes(normalize(item.bairro)) || normalize(item.name).includes(term));
-    pdf.innerHTML = matches.length ? '<option value="">Selecione o PDF</option>' : '<option value="">Nenhum PDF catalogado — envie outro abaixo</option>';
-    matches.forEach(item => { const option = document.createElement("option"); option.value = item.id; option.textContent = `${item.name} · entrega ${item.delivery}`; pdf.append(option); });
-    pdf.disabled = !matches.length;
-    current = null; renderHeat(null); renderArticleIdeas(null);
-  }
+  function selectedArticle(){const index=Number(form.querySelector('input[name="article"]:checked')?.value);return currentIdeas[index]||null;}
+  function buildPayload(){return{bairro:bairro.value.trim(),slug:slug.value.trim(),tipologia:selectedType(),fase:form.querySelector('input[name="fase"]:checked').value,property:{id:current.id,name:current.name,pdf:current.pdf,pdfUrl:current.pdfUrl||null,delivery:current.delivery,heat:current.heat,summary:current.summary},testimonials:testimonials(),article:selectedArticle(),contacts:{email:"msrougi@gmail.com",whatsapp:"5511989911000"}};}
+  function buildBriefing(payload,schedule){return `DIGIFY MONTASITE · BRIEFING DO JOB\n\nEMPREENDIMENTO\nNome: ${payload.property.name}\nBairro: ${payload.bairro}\nPDF: ${payload.property.pdf}\nURL canônica: https://imoveis.digify.live/${payload.slug}/\nFase: ${payload.fase}\nTipologia: ${payload.tipologia}\nEntrega: ${payload.property.delivery}\n\nOBJETIVO\nCriar e publicar uma landing page imobiliária premium, rápida, mobile-first, com identidade visual própria baseada no empreendimento e no público identificado após a leitura integral do PDF. Pesquisar fontes oficiais atuais e nunca inventar endereço, prazo, metragem, amenidade, disponibilidade ou condição comercial. Para preço e condições, usar “valores”; não usar o termo comercial proibido.\n\nPDF E IMAGENS\nLer o PDF integralmente. Extrair ficha técnica, diferenciais e imagens oficiais. Recortar corretamente, otimizar em WebP, preservar proporção, gerar alt text e usar lightbox. Confirmar dados divergentes antes de publicar.\n\nDEPOIMENTOS\nPublicar exatamente estes 3 depoimentos enviados pelo administrador, sem alterar autoria ou associar outra foto:\n${payload.testimonials.map((item,index)=>`${index+1}. ${item.name}: “${item.text}” · arquivo ${item.photoName}`).join("\n")}\nAs fotos devem permanecer quadradas. Ajustar object-position individualmente e conferir cabelo, testa, olhos, queixo e laterais do rosto em 1440 px e 390 px. Nunca reutilizar as fotos em outro site.\n\nPÁGINA\nIncluir hero, dados principais, galeria, lazer/diferenciais, localização, público e argumentos de decisão, plantas, os 3 depoimentos, FAQ específica, formulário, CTA final, rodapé legal, WhatsApp flutuante e CTA fixo mobile. A navegação interna deve usar rótulos naturais. Garantir acessibilidade, foco, contraste, reduced motion e ausência de sobreposição ou scroll horizontal.\n\nCONTATO\nO formulário terá nome, WhatsApp, e-mail, interesse e consentimento. Enviar por POST a https://formsubmit.co/ajax/msrougi@gmail.com e depois abrir WhatsApp para 5511989911000 com os dados preenchidos. Mostrar enviando, sucesso, erro e fallback.\n\nSEO E PUBLICAÇÃO\nCriar title, description, canonical, Open Graph, Twitter Card, H1 único, headings semânticos e JSON-LD apenas com dados confirmados. Criar a pasta public/${payload.slug}/, incluir no sitemap, redirect sem barra, card na Home e ItemList da Home. Rodar build e validar desktop/mobile, links, assets, formulário, WhatsApp, schema e exatamente 3 depoimentos. Publicar no branch main e verificar a URL ao vivo.\n\nMATÉRIA ESCOLHIDA — PUBLICAR SOMENTE UMA\nTítulo: ${payload.article.title}\nSlug: /blog/${payload.article.slug}\nIntenção: ${payload.article.intent}\nData calculada: ${schedule?formatSchedule(schedule.local):"será calculada pelo servidor"}\nCriar uma única matéria original, ligada ao empreendimento e sem canibalizar posts existentes. Usar fatos confirmados, link natural para https://imoveis.digify.live/${payload.slug}/, adicionar ao blog, sitemap e RSS. Publicar no horário agendado. Só depois de confirmar resposta pública da URL, enviar e-mail para marcelo@digify.live.\n\nPROGRESSO\nCada etapa deve reportar eventos reais ao MontaSite: validação, leitura do PDF, pesquisa, construção, publicação/linkagem e agendamento. Nunca preencher a barra com temporizador falso. Em erros, registrar causa e tentativa.\n\nENTREGA\nAo concluir, informar URLs, dados confirmados, conteúdo extraído, testes executados e pendências comerciais.`;}
+  function formatSchedule(value){return new Intl.DateTimeFormat("pt-BR",{timeZone:"America/Sao_Paulo",dateStyle:"full",timeStyle:"short"}).format(new Date(value));}
 
-  bairro.addEventListener("input", filterPdfs);
-  bairro.addEventListener("change", filterPdfs);
-  pdf.addEventListener("change", async () => {
-    current = catalog.find(item => item.id === pdf.value) || null;
-    uploadedName = "";
-    upload.value = ""; upload.closest(".upload").classList.remove("has-file");
-    if (current) { slug.value = slugify(current.name); renderHeat(current); renderArticleIdeas(current); await requestLiveInsights(current); }
-  });
-  upload.addEventListener("change", () => {
-    const file = upload.files[0]; if (!file) return;
-    uploadedName = file.name; current = { name:file.name.replace(/\.pdf$/i,""), bairro:bairro.value || "A definir", pdf:file.name, delivery:"a confirmar", heat:50, searches:"a medir", competition:"a medir", summary:"PDF enviado manualmente; análise real depende da conexão com o Google." };
-    upload.closest(".upload").classList.add("has-file"); upload.nextElementSibling.textContent = `✓ ${file.name}`;
-    slug.value = slugify(current.name); renderHeat(current); renderArticleIdeas(current);
-  });
+  function renderJob(job){setProgress(job.percent,job.status==="failed"?"error":job.status==="completed"?"done":"running");for(let i=renderedEvents;i<job.events.length;i++){const event=job.events[i];addLog(event.message,event.status||"info");const order=["validate","pdf","research","build","publish","article"],position=order.indexOf(event.step);order.forEach((key,index)=>markStep(key,index<position?"done":index===position?"active":""));}renderedEvents=job.events.length;if(job.articleSchedule){$("#schedule-preview").querySelector("small").textContent=`Publicação em ${job.articleSchedule.delayDays} dia(s)`;$("#schedule-preview").querySelector("strong").textContent=formatSchedule(job.articleSchedule.local);}if(job.configuration){addLog(job.configuration.message,"warning");$("#job-state").className="error";$("#job-state").textContent="CONFIGURAR";}}
+  async function pollJob(id){try{const response=await fetch(`/api/montasite-jobs?id=${encodeURIComponent(id)}`);const data=await response.json();if(!response.ok)throw new Error(data.error);renderJob(data.job);if(!["completed","failed","waiting_configuration"].includes(data.job.status))pollTimer=setTimeout(()=>pollJob(id),2200);}catch(error){addLog(error.message,"error");setProgress(Number($("#progress-value").textContent.replace("%",""))||0,"error");}}
 
-  function createArticleIdeas(item) {
-    if (!item) return [];
-    const region = bairro.value.trim() || item.bairro || "São Paulo";
-    const type = form.querySelector('input[name="tipologia"]:checked')?.value || "apartamentos";
-    return [
-      { intent:"Localização", title:`Como é morar em ${region}: mobilidade, serviços e rotina perto do ${item.name}`, slug:slugify(`morar-em-${region}-perto-do-${item.name}`) },
-      { intent:"Empreendimento", title:`${item.name}: plantas, lazer, diferenciais e o que confirmar antes de comprar`, slug:slugify(`${item.name}-plantas-lazer-diferenciais`) },
-      { intent:"Decisão", title:`${type} em ${region}: para quem o ${item.name} faz sentido`, slug:slugify(`${type}-${region}-${item.name}`) }
-    ];
-  }
+  form.addEventListener("submit",async event=>{event.preventDefault();if(!current||!photoState.every(Boolean)||!selectedArticle())return;resetConsole();setProgress(3);markStep("validate","active");addLog("Iniciando validação do projeto e dos arquivos.");const payload=buildPayload(),body=new FormData();body.append("payload",JSON.stringify(payload));photoState.forEach((file,index)=>body.append(`testimonial_photo_${index+1}`,file,file.name));if(selectedFile)body.append("uploaded_pdf",selectedFile,selectedFile.name);const button=$("#create-site");button.disabled=true;try{const response=await fetch("/api/montasite-jobs",{method:"POST",body});const data=await response.json().catch(()=>({error:"Resposta inválida do servidor."}));if(!response.ok)throw Object.assign(new Error(data.error||"Não foi possível criar o job."),{status:response.status});renderJob(data.job);const briefing=buildBriefing(payload,data.job.articleSchedule);promptEl.textContent=briefing;$("#output-summary").textContent=`Job ${data.job.id} criado. A matéria escolhida foi programada para ${formatSchedule(data.job.articleSchedule.local)}.`;output.hidden=false;output.scrollIntoView({behavior:"smooth",block:"start"});if(!["completed","failed","waiting_configuration"].includes(data.job.status))pollJob(data.job.id);}catch(error){setProgress(8,"error");markStep("validate","active");addLog(error.message,"error");const briefing=buildBriefing(payload,null);promptEl.textContent=briefing;$("#output-summary").textContent="Prévia local criada, mas o job não entrou na fila. Complete a configuração indicada no painel e tente novamente.";output.hidden=false;output.scrollIntoView({behavior:"smooth",block:"start"});}finally{button.disabled=false;updateCreateState();}});
 
-  function renderArticleIdeas(item) {
-    if (!item) { articlePanel.hidden = true; articleIdeas.replaceChildren(); return; }
-    const ideas = createArticleIdeas(item);
-    articleIdeas.innerHTML = ideas.map((idea,index) => `<article class="article-idea"><b>0${index+1}</b><div><strong>${escapeHtml(idea.title)}</strong><span>${escapeHtml(idea.intent)} · /blog/${escapeHtml(idea.slug)}</span></div></article>`).join("");
-    articlePanel.hidden = false;
-  }
-
-  form.querySelectorAll('input[name="fase"],input[name="tipologia"]').forEach(input => input.addEventListener("change", () => renderArticleIdeas(current)));
-
-  function renderHeat(item, live) {
-    const card = $("#heat-card"), scale = document.querySelectorAll(".heat-scale span");
-    if (!item) {
-      card.className = "heat-card is-empty"; $("#heat-label").textContent="—"; $("#heat-score").textContent="0"; $("#heat-summary").textContent="Selecione um PDF para analisar nome, região e intenção de busca.";
-      $(".thermometer i").style.height="0"; scale.forEach(x=>x.classList.remove("active")); ["#m-searches","#m-competition","#m-impressions","#m-position"].forEach(id=>$(id).textContent="—"); return;
-    }
-    const score = live?.score ?? item.heat, index = heatIndex(score);
-    card.className = `heat-card heat-${index}`; $("#heat-label").textContent=labels[index]; $("#heat-score").textContent=score; $("#heat-summary").textContent=live?.summary || item.summary;
-    $(".thermometer i").style.height=`${Math.max(7,score)}%`; $(".thermometer i").style.background=colors[index]; scale.forEach((x,i)=>x.classList.toggle("active",i===index));
-    $("#m-searches").textContent=formatNumber(live?.monthlySearches ?? item.searches); $("#m-competition").textContent=live?.competition ?? item.competition; $("#m-impressions").textContent=formatNumber(live?.impressions ?? "sem dados"); $("#m-position").textContent=live?.position ? Number(live.position).toFixed(1) : "sem dados";
-    $("#data-source").textContent = live ? `Google Ads + Search Console · ${new Date(live.collectedAt || Date.now()).toLocaleDateString("pt-BR")}` : "Estimativa estratégica Digify · conectar Google para dados reais";
-  }
-
-  async function requestLiveInsights(item) {
-    try {
-      const response = await fetch(`/api/search-insights?name=${encodeURIComponent(item.name)}&bairro=${encodeURIComponent(item.bairro)}&url=${encodeURIComponent(`https://imoveis.digify.live/${slug.value}/`)}`);
-      if (!response.ok) return;
-      const data = await response.json(); if (data?.connected) renderHeat(item, data);
-    } catch { /* mantém fallback editorial */ }
-  }
-
-  const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-  async function runSteps() {
-    const steps = [...document.querySelectorAll("#steps li")], idle = $("#idle");
-    steps.forEach(x => x.className=""); idle.className="idle running"; idle.querySelector("span").textContent="CRIANDO"; idle.querySelector("p").textContent="Preparando o briefing completo…";
-    for (let i=0;i<steps.length;i++) { steps[i].classList.add("active"); await wait(i===1?850:560); steps[i].classList.remove("active"); steps[i].classList.add("done"); }
-    idle.querySelector("span").textContent="CONCLUÍDO"; idle.querySelector("p").textContent="Prompt pronto para copiar e usar no Codex.";
-  }
-
-  function buildPrompt(data) {
-    const item = current;
-    const heat = labels[heatIndex(item.heat)];
-    const ideas = createArticleIdeas(item);
-    return `Crie e publique uma landing page imobiliária completa para o empreendimento abaixo, seguindo integralmente o playbook da Digify Imóveis.
-
-DADOS DE ENTRADA
-- Empreendimento: ${item.name}
-- Bairro/região: ${data.bairro}
-- PDF-fonte: ${item.pdf}${uploadedName ? " (arquivo enviado pelo usuário)" : " (catálogo local de PDFs)"}
-- URL canônica obrigatória: https://imoveis.digify.live/${data.slug}/
-- Fase: ${data.fase}
-- Tipologia prioritária: ${data.tipologia}
-- Entrega conhecida: ${item.delivery}
-- Temperatura de busca atual: ${heat} (${item.heat}/100)
-- Leitura de demanda: ${item.summary}
-
-OBJETIVO
-Criar uma página premium, rápida, mobile-first, altamente persuasiva e específica para o público provável deste empreendimento. Ela deve manter o nível de qualidade e a lógica de conversão do WELL Perdizes e do Peak Vila Olímpia, mas ter direção visual própria, coerente com o imóvel, o bairro, o tíquete, as plantas e a incorporadora. Não fazer uma cópia visual genérica.
-
-PESQUISA E VERACIDADE
-1. Leia o PDF integralmente e extraia dele a ficha técnica, endereço, metragens, tipologias, vagas, lazer, diferenciais, incorporadora, arquitetura, paisagismo, decoração, registro, prazo e observações legais.
-2. Pesquise muito em fontes oficiais e atuais: incorporadora, página oficial, book, memorial, mapa e documentação disponível. Confirme fatos instáveis antes de publicar.
-3. Não invente endereço, metragem, prazo, unidade disponível, condição comercial, distância, registro ou amenidade. Se houver divergência, explique e peça confirmação antes da publicação.
-4. Nunca prometa valorização, renda, liquidez ou ocupação. Use linguagem de potencial e inclua aviso de que resultados dependem do mercado.
-5. Valores, disponibilidade, condições e prazo devem ter aviso de atualização e confirmação contratual.
-6. Para preços, use sempre “valores”, “valores atualizados” ou “condições comerciais”. Não empregue outro termo comercial.
-
-IMAGENS E PDF
-1. Extraia do PDF as melhores imagens oficiais: fachada, áreas comuns, localização, implantação e todas as plantas relevantes.
-2. Recorte corretamente, remova margens editoriais quando necessário, preserve proporção e não deixe textos do book cortados de forma ruim.
-3. Converta para WebP, comprima sem perda visual importante, use nomes SEO e mantenha fallback quando necessário.
-4. Priorize imagens oficiais no hero, galeria, localização, plantas e CTA final. Inclua uma nota discreta informando que perspectivas e plantas vêm do material de divulgação.
-5. Crie lightbox funcional para galeria e plantas.
-6. As fotos de pessoas dos depoimentos devem ser exclusivas desta página: nunca reutilize retratos presentes em WELL Perdizes, Peak Vila Olímpia ou qualquer outro imóvel do domínio.
-7. Enquadre cada rosto individualmente em desktop e celular. Use crop focado no rosto, object-position/background-position específico por foto e uma zona segura que preserve cabelo, testa, olhos, queixo e laterais da face. No celular, mantenha o container da foto próximo da proporção original do retrato; não comprima uma foto vertical em uma faixa horizontal baixa.
-8. Verifique visualmente os três retratos em viewport desktop de 1440 px e celular de 390 px. Não publique nenhum rosto cortado, escondido por overlay ou deslocado para fora do card.
-
-PÚBLICO, COPY E ESTRATÉGIA
-1. Defina o público-alvo antes de escrever: moradia, investidor, família, primeira compra, estudante, executivo ou combinação coerente.
-2. Alinhe headline, benefícios, ordem das seções e CTAs à intenção de busca por nome do imóvel e por bairro.
-3. Destaque diferenciais concretos do entorno e do produto, evitando clichês sem prova.
-4. Inclua argumentos separados para morar e investir quando ambos fizerem sentido.
-5. Use urgência apenas de forma verificável. Não invente “últimas unidades”.
-
-ESTRUTURA MÍNIMA DA PÁGINA
-- Barra de condições e cabeçalho enxuto.
-- Hero cinematográfico com nome, fase, localização, proposta e CTAs.
-- Seção de oportunidade/endereço.
-- Números principais do empreendimento.
-- Imagem de impacto em largura total.
-- Galeria oficial e lista completa de lazer/diferenciais.
-- Localização com endereço, pontos relevantes e link para o Google Maps.
-- Seção “para quem faz sentido” ou tese de decisão.
-- Exatamente 3 depoimentos em cards, nunca 2.
-- Depoimentos provisórios e editáveis, coerentes com três perfis reais de público; não apresentá-los como relatos reais até serem substituídos por depoimentos autorizados.
-- Usar fotos de pessoas reais da Unsplash como background, sem links de referência visíveis na interface.
-- As 3 fotos devem ser diferentes entre si e diferentes das usadas em todas as outras páginas imobiliárias do site.
-- Seção de plantas oficiais com todas as opções pertinentes.
-- Formulário completo.
-- FAQ com pelo menos cinco perguntas específicas.
-- CTA final e rodapé legal.
-
-FORMULÁRIO E CONTATO — OBRIGATÓRIO
-1. Campos: nome, WhatsApp, e-mail, interesse/tipologia e consentimento.
-2. Enviar o lead por POST para https://formsubmit.co/ajax/msrougi@gmail.com.
-3. Assunto identificando claramente o empreendimento e origem da landing page.
-4. Após o envio por e-mail, abrir WhatsApp para 5511989911000 com mensagem preenchida contendo nome, telefone, e-mail, empreendimento e interesse.
-5. Exibir estados de enviando, sucesso e erro. Se o e-mail falhar, manter CTA direto para WhatsApp.
-6. Todos os CTAs devem levar ao formulário ou ao WhatsApp correto.
-
-CONVERSÃO E EXPERIÊNCIA
-- CTA flutuante do WhatsApp e CTA fixo no mobile.
-- Barra de progresso de leitura.
-- Navegação por âncoras internas clara, sem chamar isso de “âncora” na copy do usuário.
-- Popup de engajamento/saída com frequência controlada, fácil de fechar e sem bloquear acessibilidade.
-- Feedback visual nos botões, carregamento lazy e interações suaves.
-- Respeitar prefers-reduced-motion, foco visível, labels, contraste, alt text e navegação por teclado.
-- Não deixar imagens, overlays, títulos ou botões se sobreporem no mobile.
-
-SEO E DESCOBERTA
-1. Title, meta description, canonical exata, Open Graph e Twitter Card com imagem oficial absoluta.
-2. Um H1 forte; headings semânticos; texto útil sobre o nome do imóvel, bairro, tipologias e intenção do público.
-3. JSON-LD adequado (ApartmentComplex/RealEstateListing), PostalAddress, imagem e URL, somente com dados confirmados.
-4. Incluir a URL no sitemap e criar redirect sem barra para a versão canônica com barra.
-5. Atualizar a Home de https://imoveis.digify.live/ com card destacado do novo empreendimento, imagem oficial, descrição, metragens e link.
-6. Atualizar o JSON-LD ItemList da Home, posições e quantidade sem remover os imóveis existentes.
-7. Não alterar artigos ou páginas que não façam parte do projeto.
-
-MATÉRIAS DE APOIO E LINKAGEM INTERNA — OBRIGATÓRIO
-Depois de ler integralmente o PDF e concluir a pesquisa, refine e publique exatamente 3 matérias no blog para formar um cluster em torno da landing page. As sugestões iniciais são:
-${ideas.map((idea,index) => `${index+1}. [${idea.intent}] ${idea.title}\n   Slug inicial: ${idea.slug}`).join("\n")}
-
-Regras editoriais das três matérias:
-1. Separar claramente as intenções: uma matéria sobre localização e rotina; uma sobre o edifício, plantas e diferenciais; uma sobre decisão de moradia ou investimento ligada à tipologia prioritária.
-2. Usar apenas fatos confirmados no PDF e em fontes atuais. Não inventar preços, valorização, rentabilidade, distâncias ou disponibilidade.
-3. Cada matéria deve ter title e descrição próprios, front matter compatível com content/posts, imagem oficial pertinente, 700 a 1.000 palavras e linguagem direta da Digify Imóveis.
-4. Incluir imovelUrl apontando para https://imoveis.digify.live/${data.slug}/ e imovelNome com o nome correto do empreendimento.
-5. Linkar naturalmente para a landing page em todas as três matérias; cruzar as matérias entre si quando útil e adicionar links vindos de artigos existentes realmente relacionados.
-6. Evitar canibalização: não repetir o mesmo título, palavra-chave principal ou argumento central nas três matérias.
-7. Rodar o build para que as matérias entrem na página /blog/, sitemap e RSS.
-
-GOOGLE ADS E SEARCH CONSOLE
-- Se a integração estiver conectada, consultar Google Ads Keyword Planner para: nome exato, nome + bairro, apartamentos + bairro, lançamento + bairro, tipologia + bairro e variações de alta intenção.
-- Coletar média mensal dos últimos 12 meses, tendência mensal, concorrência, índice de concorrência e faixas de lance.
-- Consultar Search Console para a URL e consultas relacionadas: impressões, cliques, CTR e posição média.
-- Registrar a fonte e data da coleta. Não chamar estimativa de dado real.
-- Usar os dados para priorizar title, H1, FAQ, textos, links internos e próxima campanha, sem keyword stuffing.
-
-IMPLEMENTAÇÃO NO REPOSITÓRIO
-- Repositório: msrougi/digify-imoveis, branch main.
-- Criar em public/${data.slug}/ com assets locais e caminhos absolutos consistentes.
-- Preservar o build estático e o deploy do Cloudflare Pages.
-- Formulários e segredos devem ser seguros; nunca colocar client secret, refresh token ou developer token no JavaScript público.
-- Não desfazer alterações do usuário nem sobrescrever trabalho não relacionado.
-
-VALIDAÇÃO ANTES DE PUBLICAR
-1. Rodar o build completo.
-2. Validar JavaScript, links, imagens, favicon, redirects, sitemap, canonical, Schema e ausência da palavra proibida para preços.
-3. Testar desktop e mobile, formulário, WhatsApp, lightbox, popup, FAQ, navegação e estados de erro/sucesso.
-4. Confirmar exatamente 3 depoimentos.
-5. Verificar que não há assets quebrados, conteúdo cortado, scroll horizontal ou texto ilegível.
-6. Conferir no DOM e visualmente que os 3 rostos estão inteiros em 1440 px e 390 px e que nenhum retrato já aparece em outro imóvel do domínio.
-7. Confirmar que as 3 matérias aparecem no blog, apontam para o imóvel e estão no sitemap.
-8. Só então publicar no main e verificar a URL ao vivo.
-
-ENTREGA
-Faça o trabalho completo agora: pesquisa, tratamento das imagens do PDF, implementação, integração na Home, testes e publicação. Ao final, informe a URL publicada, os principais fatos confirmados, o que foi extraído do PDF, os testes executados e qualquer dado que ainda dependa de confirmação comercial.`;
-  }
-
-  form.addEventListener("submit", async event => {
-    event.preventDefault();
-    if (!current) { alert("Selecione um PDF do catálogo ou envie outro arquivo."); return; }
-    const button = form.querySelector(".create"), data = Object.fromEntries(new FormData(form));
-    button.disabled=true; button.querySelector("span").textContent="Criando briefing…"; await runSteps();
-    const text = buildPrompt(data); promptEl.textContent=text; output.hidden=false; button.disabled=false; button.querySelector("span").textContent="Criar novamente"; output.scrollIntoView({behavior:"smooth",block:"start"});
-  });
-
-  $("#copy").addEventListener("click", async event => { await navigator.clipboard.writeText(promptEl.textContent); const old=event.target.textContent; event.target.textContent="Copiado ✓"; setTimeout(()=>event.target.textContent=old,1800); });
-  $("#download").addEventListener("click", () => { const blob=new Blob([promptEl.textContent],{type:"text/plain;charset=utf-8"}), link=document.createElement("a"); link.href=URL.createObjectURL(blob); link.download=`prompt-${slug.value || "imovel"}.txt`; link.click(); URL.revokeObjectURL(link.href); });
-  const dialog=$("#google-dialog"); $("#connect-google").addEventListener("click",()=>dialog.showModal()); dialog.querySelectorAll(".dialog-close,.dialog-action").forEach(button=>button.addEventListener("click",()=>dialog.close()));
+  $("#copy").addEventListener("click",async event=>{await navigator.clipboard.writeText(promptEl.textContent);const old=event.target.textContent;event.target.textContent="Copiado ✓";setTimeout(()=>event.target.textContent=old,1500);});
+  $("#download").addEventListener("click",()=>{const blob=new Blob([promptEl.textContent],{type:"text/plain;charset=utf-8"}),link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download=`montasite-${slug.value||"projeto"}.txt`;link.click();URL.revokeObjectURL(link.href);});
+  $("#clear-log").addEventListener("click",()=>$("#log-lines").replaceChildren());
+  $("#logout").addEventListener("click",async()=>{await fetch("/api/montasite-auth/logout",{method:"POST"});location.replace("/montasite/login/");});
+  const dialog=$("#google-dialog");$("#connect-google").addEventListener("click",()=>dialog.showModal());dialog.querySelectorAll(".dialog-close,.dialog-action").forEach(button=>button.addEventListener("click",()=>dialog.close()));
 })();

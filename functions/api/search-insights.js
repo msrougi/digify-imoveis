@@ -1,3 +1,5 @@
+import { verifySession } from "../_shared/montasite-auth.js";
+
 const json = (data, status = 200) => new Response(JSON.stringify(data), {
   status,
   headers: { "content-type": "application/json; charset=utf-8", "cache-control": "private, max-age=1800" }
@@ -27,6 +29,7 @@ const scoreInsights = ({ monthlySearches = 0, competitionIndex = 0, impressions 
 };
 
 export async function onRequestGet({ request, env }) {
+  if (!(await verifySession(request, env))) return json({ connected:false, error:"unauthorized" }, 401);
   const missing = required.filter(key => !env[key]);
   if (missing.length) return json({ connected:false, status:"configuration_required", missing }, 503);
 

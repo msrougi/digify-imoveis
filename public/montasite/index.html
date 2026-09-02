@@ -1,99 +1,47 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>MontaSite · Digify Imóveis</title>
-  <meta name="description" content="Ferramenta interna para selecionar empreendimentos e gerar o briefing completo de novas páginas imobiliárias.">
-  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
-  <meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
-  <meta name="theme-color" content="#07130f">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/montasite/assets/montasite.css">
-  <link rel="stylesheet" href="/montasite/assets/articles.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Digify MontaSite · Operação imobiliária</title>
+  <meta name="description" content="Ferramenta interna para pesquisar empreendimentos, interpretar PDFs e orquestrar páginas imobiliárias.">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><meta name="theme-color" content="#070810">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"><link rel="stylesheet" href="/montasite/assets/montasite.css">
 </head>
-<body>
+<body class="dashboard-page">
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <header class="app-header shell"><a class="brand" href="/" aria-label="Digify Imóveis"><span>digify.</span><small>MONTASITE</small></a><div class="header-right"><span class="private-pill"><i></i> Privado · noindex</span><button id="logout" class="logout" type="button">Sair</button></div></header>
   <main>
-    <header class="shell header">
-      <a class="brand" href="/" aria-label="Digify Imóveis"><span>digify.</span><small>IMÓVEIS / LAB</small></a>
-      <div class="privacy"><i></i> Ferramenta interna · não indexada</div>
-    </header>
-
-    <section class="shell hero">
-      <div>
-        <p class="kicker">MontaSite 01</p>
-        <h1>Do PDF ao site<br><em>sem esquecer nada.</em></h1>
-      </div>
-      <p>Escolha o empreendimento, confira a demanda no Google e gere o prompt completo para criar a próxima landing page da Digify Imóveis.</p>
-    </section>
-
-    <section class="shell workspace">
-      <form id="site-form" class="builder">
-        <div class="section-title"><span>01</span><div><h2>Dados do projeto</h2><p>Os PDFs encontrados são filtrados automaticamente pelo bairro.</p></div></div>
-
-        <label class="field"><span>Bairro</span><input id="bairro" name="bairro" list="bairros" autocomplete="off" placeholder="Ex.: Moema" required><datalist id="bairros"></datalist></label>
-        <label class="field"><span>PDF do empreendimento</span><select id="pdf" name="pdf" required disabled><option value="">Informe o bairro primeiro</option></select></label>
-        <label class="upload"><input id="pdf-upload" type="file" accept="application/pdf"><span>＋ Usar outro PDF</span><small>O arquivo fica apenas neste navegador e entra no briefing pelo nome.</small></label>
-        <label class="field"><span>URL final</span><div class="url-field"><b>imoveis.digify.live/</b><input id="slug" name="slug" placeholder="nome-do-imovel" pattern="[a-z0-9-]+" required></div></label>
-
-        <fieldset><legend>Fase do imóvel</legend><div class="choice-grid two"><label><input type="radio" name="fase" value="Lançamento" checked><span>Lançamento</span></label><label><input type="radio" name="fase" value="Pronta entrega"><span>Pronta entrega</span></label></div></fieldset>
-        <fieldset><legend>Tipologia prioritária</legend><div class="choice-grid three"><label><input type="radio" name="tipologia" value="Studio / 1 dormitório" checked><span>Studio / 1 dorm.</span></label><label><input type="radio" name="tipologia" value="2 dormitórios"><span>2 dorms.</span></label><label><input type="radio" name="tipologia" value="3 dormitórios ou mais"><span>3 dorms. ou +</span></label></div></fieldset>
-
-        <div class="google-panel">
-          <div class="google-head"><div><span class="google-g">G</span><div><h3>Inteligência de busca</h3><p id="data-source">Estimativa Digify · aguardando seleção</p></div></div><button class="connect" type="button" id="connect-google">Conectar Google</button></div>
-          <div id="heat-card" class="heat-card is-empty">
-            <div class="thermometer" aria-hidden="true"><i></i></div>
-            <div><small>Temperatura de busca</small><strong id="heat-label">—</strong><p id="heat-summary">Selecione um PDF para analisar nome, região e intenção de busca.</p></div>
-            <div class="score"><span id="heat-score">0</span><small>/ 100</small></div>
-          </div>
-          <div class="heat-scale" aria-label="Escala de temperatura"><span>Gelado</span><span>Frio</span><span>Morno</span><span>Quente</span><span>Fervendo</span></div>
-          <div class="metrics">
-            <div><small>Buscas/mês</small><strong id="m-searches">—</strong></div><div><small>Concorrência</small><strong id="m-competition">—</strong></div><div><small>Impressões</small><strong id="m-impressions">—</strong></div><div><small>Posição média</small><strong id="m-position">—</strong></div>
-          </div>
-          <p class="google-note">Com Google Ads e Search Console conectados, os números passam a ser reais e exibem a data da coleta. Sem conexão, a temperatura é uma estimativa editorial para priorização.</p>
-        </div>
-
-        <section class="article-panel" id="article-panel" hidden aria-live="polite">
-          <div class="article-head"><div><span>SEO</span><div><h3>3 matérias de apoio</h3><p>Sugeridas após selecionar e interpretar o material.</p></div></div><small>Cluster interno</small></div>
-          <div id="article-ideas" class="article-ideas"></div>
-          <p class="article-note">As pautas são refinadas pela leitura integral do PDF antes da publicação e devem apontar para a página do imóvel.</p>
+    <section class="hero shell"><div><p class="eyebrow"><i></i> OPERADOR DE LANÇAMENTOS</p><h1>Do bairro ao site.<br><em>Sem perder o timing.</em></h1></div><div class="hero-copy"><span>MS / 01</span><p>Pesquise os materiais, confira a demanda, alimente os depoimentos e acompanhe cada ação até a publicação.</p></div></section>
+    <form id="site-form" class="shell app-grid">
+      <div class="builder-stack">
+        <section class="glass-card form-section">
+          <div class="section-heading"><span>01</span><div><p class="eyebrow">Descoberta</p><h2>Encontre o empreendimento.</h2><small>Primeiro o bairro e a tipologia. Depois, os PDFs compatíveis.</small></div></div>
+          <div class="field-grid"><label class="field"><span>Bairro</span><input id="bairro" name="bairro" list="bairros" autocomplete="off" placeholder="Ex.: Moema" required><datalist id="bairros"></datalist></label><fieldset class="field"><legend>Tipologia</legend><div class="segmented three"><label><input type="radio" name="tipologia" value="Studio / 1 dormitório" checked><span>Studio / 1 dorm.</span></label><label><input type="radio" name="tipologia" value="2 dormitórios"><span>2 dorms.</span></label><label><input type="radio" name="tipologia" value="3 dormitórios ou mais"><span>3 dorms. ou +</span></label></div></fieldset></div>
+          <button id="search-pdfs" class="secondary-action" type="button"><span>Buscar PDFs compatíveis</span><b>⌁</b></button>
+          <div class="pdf-results" id="pdf-results" hidden><label class="field"><span>Materiais encontrados</span><select id="pdf" name="pdf"><option value="">Selecione o PDF</option></select></label><div class="or"><span>ou</span></div><label class="upload"><input id="pdf-upload" type="file" accept="application/pdf"><b>＋</b><span><strong>Enviar outro PDF</strong><small>PDF original, preferencialmente até 25 MB.</small></span></label></div>
         </section>
 
-        <button class="create" type="submit"><span>Criar site</span><b>→</b></button>
-      </form>
+        <section class="glass-card form-section" id="project-section" hidden>
+          <div class="section-heading"><span>02</span><div><p class="eyebrow">Configuração</p><h2>Defina a nova página.</h2></div></div>
+          <div class="field-grid"><label class="field"><span>URL final</span><div class="url-field"><b>imoveis.digify.live/</b><input id="slug" name="slug" placeholder="nome-do-imovel" pattern="[a-z0-9-]+" required></div></label><fieldset class="field"><legend>Fase do imóvel</legend><div class="segmented two"><label><input type="radio" name="fase" value="Lançamento" checked><span>Lançamento</span></label><label><input type="radio" name="fase" value="Pronta entrega"><span>Pronta entrega</span></label></div></fieldset></div>
+          <div class="insights-card"><div class="insights-head"><div><i>G</i><span><strong>Inteligência de busca</strong><small id="data-source">Estimativa Digify</small></span></div><button type="button" id="connect-google">Configurar Google</button></div><div class="heat-row"><div class="heat-orb" id="heat-orb"><span id="heat-score">0</span><small>/100</small></div><div><small>Temperatura</small><strong id="heat-label">—</strong><p id="heat-summary">Selecione um material para analisar.</p></div></div><div class="heat-scale"><span>Gelado</span><span>Frio</span><span>Morno</span><span>Quente</span><span>Fervendo</span></div><div class="metrics"><div><small>Buscas/mês</small><strong id="m-searches">—</strong></div><div><small>Concorrência</small><strong id="m-competition">—</strong></div><div><small>Impressões</small><strong id="m-impressions">—</strong></div><div><small>Posição média</small><strong id="m-position">—</strong></div></div></div>
+        </section>
 
-      <aside class="process" aria-live="polite">
-        <div class="section-title"><span>02</span><div><h2>Execução</h2><p>Acompanhe cada etapa da preparação.</p></div></div>
-        <ol id="steps">
-          <li data-step="0"><i></i><div><strong>Validar dados</strong><span>Bairro, URL e perfil do imóvel</span></div></li>
-          <li data-step="1"><i></i><div><strong>Ler o PDF</strong><span>Ficha, diferenciais, imagens e plantas</span></div></li>
-          <li data-step="2"><i></i><div><strong>Analisar buscas</strong><span>Nome, bairro, intenção e concorrência</span></div></li>
-          <li data-step="3"><i></i><div><strong>Definir estratégia</strong><span>Público, narrativa, SEO e conversão</span></div></li>
-          <li data-step="4"><i></i><div><strong>Sugerir 3 matérias</strong><span>Localização, edifício e decisão de compra</span></div></li>
-          <li data-step="5"><i></i><div><strong>Montar o briefing</strong><span>Seções, CTAs, integrações e critérios</span></div></li>
-          <li data-step="6"><i></i><div><strong>Gerar prompt final</strong><span>Instrução completa pronta para o Codex</span></div></li>
-        </ol>
-        <div class="idle" id="idle"><span>PRONTO</span><p>Preencha os dados e clique em “Criar site”.</p></div>
-      </aside>
-    </section>
+        <section class="glass-card form-section" id="testimonials-section" hidden>
+          <div class="section-heading"><span>03</span><div><p class="eyebrow">Prova social</p><h2>Adicione 3 depoimentos reais.</h2><small>Nome, texto e foto correspondente são obrigatórios. A foto não é associada automaticamente a nenhuma pessoa.</small></div></div><div class="testimonial-grid" id="testimonial-grid"></div><p class="field-hint">Fotos quadradas em JPG ou WebP, mínimo 600×600 px. Recomendado: 800×800 px e até 500 KB.</p>
+        </section>
 
-    <section class="shell output" id="output" hidden>
-      <div class="output-head"><div><p class="kicker">Prompt mestre</p><h2>Briefing pronto para criar.</h2></div><div><button id="download" type="button">Baixar .txt</button><button id="copy" type="button">Copiar prompt</button></div></div>
-      <pre id="prompt"></pre>
-    </section>
+        <section class="glass-card form-section" id="articles-section" hidden>
+          <div class="section-heading"><span>04</span><div><p class="eyebrow">SEO editorial</p><h2>Escolha 1 das 3 pautas.</h2><small>Somente a pauta escolhida será criada e agendada entre 1 e 4 dias após a página entrar no ar.</small></div></div><div id="article-ideas" class="article-ideas"></div><div class="schedule-preview" id="schedule-preview"><i></i><span><small>Previsão calculada ao criar o job</small><strong>A data e o horário aparecerão aqui.</strong></span></div>
+        </section>
+        <button class="primary-action create-site" id="create-site" type="submit" disabled><span>Criar site e agendar matéria</span><b>↗</b></button>
+      </div>
+
+      <aside class="console-card"><div class="console-top"><div><p class="eyebrow">Execução em tempo real</p><h2>Operation feed</h2></div><span id="job-state">PRONTO</span></div><div class="progress-wrap"><div class="progress-label"><span>Progresso real</span><strong id="progress-value">0%</strong></div><div class="progress-track"><i id="progress-bar"></i></div></div><ol id="steps"><li data-key="validate"><i></i><div><strong>Validar dados</strong><span>Campos, arquivos e autorização</span></div></li><li data-key="pdf"><i></i><div><strong>Interpretar PDF</strong><span>Ficha, imagens, plantas e diferenciais</span></div></li><li data-key="research"><i></i><div><strong>Pesquisar e analisar</strong><span>Produto, região e buscas</span></div></li><li data-key="build"><i></i><div><strong>Construir página</strong><span>Copy, design, SEO e formulário</span></div></li><li data-key="publish"><i></i><div><strong>Publicar e interligar</strong><span>URL, card da Home e sitemap</span></div></li><li data-key="article"><i></i><div><strong>Agendar matéria</strong><span>1 pauta, de 1 a 4 dias depois</span></div></li></ol><div class="live-log"><div class="live-log-head"><span><i></i> LIVE LOG</span><button id="clear-log" type="button">limpar</button></div><div id="log-lines"><p><time>—</time> Aguardando novo projeto.</p></div></div></aside>
+    </form>
+    <section class="shell output" id="output" hidden><div><p class="eyebrow">Briefing do job</p><h2>Projeto preparado.</h2><p id="output-summary"></p></div><div class="output-actions"><button id="download" type="button">Baixar briefing</button><button id="copy" type="button">Copiar briefing</button></div><pre id="prompt"></pre></section>
   </main>
-
-  <dialog id="google-dialog">
-    <button class="dialog-close" aria-label="Fechar">×</button>
-    <p class="kicker">Integração Google</p><h2>Dados reais, credenciais seguras.</h2>
-    <p>O painel está preparado para receber Google Ads e Search Console por uma função segura no servidor. Para ativar, configure no Cloudflare:</p>
-    <ul><li>Projeto no Google Cloud e OAuth 2.0</li><li>Developer Token e Customer ID do Google Ads</li><li>Acesso à propriedade <b>sc-domain:imoveis.digify.live</b></li><li>Secrets no servidor — nunca no JavaScript público</li></ul>
-    <p class="dialog-note">Depois da conexão, o botão consulta volume médio mensal, concorrência, lances, impressões, cliques, CTR e posição.</p>
-    <button class="dialog-action" type="button">Entendi</button>
-  </dialog>
+  <dialog id="google-dialog"><button class="dialog-close" aria-label="Fechar">×</button><p class="eyebrow">Integrações</p><h2>Google Ads + Search Console</h2><p>As credenciais ficam somente nos secrets do Cloudflare. Com a integração ativa, o MontaSite consulta volume, concorrência, impressões, cliques, CTR e posição antes de definir a estratégia.</p><div class="secret-list"><span>GOOGLE_CLIENT_ID</span><span>GOOGLE_CLIENT_SECRET</span><span>GOOGLE_REFRESH_TOKEN</span><span>GOOGLE_ADS_DEVELOPER_TOKEN</span><span>GOOGLE_ADS_CUSTOMER_ID</span><span>SEARCH_CONSOLE_SITE_URL</span></div><button class="primary-action dialog-action" type="button"><span>Entendi</span><b>✓</b></button></dialog>
   <script src="/montasite/assets/montasite.js"></script>
-</body>
-</html>
+</body></html>
