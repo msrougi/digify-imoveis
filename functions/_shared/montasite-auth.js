@@ -111,15 +111,18 @@ export const maskEmail = email => {
   return `${name.slice(0, 2)}${"*".repeat(Math.max(2, name.length - 2))}@${domain}`;
 };
 
-export const authConfig = env => ({
-  ready: Boolean(env.MONTASITE_AUTH && env.MONTASITE_ADMIN_EMAIL && env.MONTASITE_PASSWORD_HASH && env.MONTASITE_SESSION_SECRET && env.MONTASITE_OTP_SECRET && env.RESEND_API_KEY && env.MONTASITE_EMAIL_FROM),
-  missing: [
+export const authConfig = env => {
+  const hasNativeEmail = Boolean(env.MONTASITE_EMAIL && typeof env.MONTASITE_EMAIL.send === "function");
+  const hasResendFallback = Boolean(env.RESEND_API_KEY && env.MONTASITE_EMAIL_FROM);
+  return {
+    ready: Boolean(env.MONTASITE_AUTH && env.MONTASITE_ADMIN_EMAIL && env.MONTASITE_PASSWORD_HASH && env.MONTASITE_SESSION_SECRET && env.MONTASITE_OTP_SECRET && (hasNativeEmail || hasResendFallback)),
+    missing: [
     ["MONTASITE_AUTH", env.MONTASITE_AUTH],
     ["MONTASITE_ADMIN_EMAIL", env.MONTASITE_ADMIN_EMAIL],
     ["MONTASITE_PASSWORD_HASH", env.MONTASITE_PASSWORD_HASH],
     ["MONTASITE_SESSION_SECRET", env.MONTASITE_SESSION_SECRET],
     ["MONTASITE_OTP_SECRET", env.MONTASITE_OTP_SECRET],
-    ["RESEND_API_KEY", env.RESEND_API_KEY],
-    ["MONTASITE_EMAIL_FROM", env.MONTASITE_EMAIL_FROM]
+    ["MONTASITE_EMAIL", hasNativeEmail || hasResendFallback]
   ].filter(([, value]) => !value).map(([name]) => name)
-});
+  };
+};

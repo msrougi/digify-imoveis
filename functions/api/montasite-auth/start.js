@@ -34,18 +34,34 @@ export async function onRequestPost({ request, env }) {
     expiresAt: Date.now() + 10 * 60 * 1000
   }), { expirationTtl: 10 * 60 });
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify({
-      from: env.MONTASITE_EMAIL_FROM,
-      to: [adminEmail],
-      subject: `${code} é seu código do Digify MontaSite`,
-      html: `<div style="font-family:Arial,sans-serif;background:#080b12;color:#fff;padding:32px"><p style="color:#94a3b8">DIGIFY MONTASITE</p><h1 style="font-size:42px;letter-spacing:8px;margin:18px 0;color:#b8ff3d">${code}</h1><p>Use este código para entrar. Ele expira em 10 minutos e só pode ser usado uma vez.</p><p style="color:#94a3b8;font-size:12px">Se você não iniciou este acesso, ignore este e-mail.</p></div>`
-    })
-  });
+  const subject = `${code} é seu código do Digify MontaSite`;
+  const text = `Seu código do Digify MontaSite é ${code}. Ele expira em 10 minutos e só pode ser usado uma vez.`;
+  const html = `<div style="font-family:Arial,sans-serif;background:#080b12;color:#fff;padding:32px"><p style="color:#94a3b8">DIGIFY MONTASITE</p><h1 style="font-size:42px;letter-spacing:8px;margin:18px 0;color:#b8ff3d">${code}</h1><p>Use este código para entrar. Ele expira em 10 minutos e só pode ser usado uma vez.</p><p style="color:#94a3b8;font-size:12px">Se você não iniciou este acesso, ignore este e-mail.</p></div>`;
 
-  if (!response.ok) {
+  let sent = false;
+  try {
+    if (env.MONTASITE_EMAIL && typeof env.MONTASITE_EMAIL.send === "function") {
+      await env.MONTASITE_EMAIL.send({
+        from: { email: "montasite@digify.live", name: "Digify MontaSite" },
+        to: adminEmail,
+        subject,
+        text,
+        html
+      });
+      sent = true;
+    } else if (env.RESEND_API_KEY && env.MONTASITE_EMAIL_FROM) {
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
+        body: JSON.stringify({ from: env.MONTASITE_EMAIL_FROM, to: [adminEmail], subject, text, html })
+      });
+      sent = response.ok;
+    }
+  } catch {
+    sent = false;
+  }
+
+  if (!sent) {
     await env.MONTASITE_AUTH.delete(`challenge:${challengeId}`);
     return json({ ok: false, error: "Não foi possível enviar o código. Confira a configuração do e-mail." }, 502);
   }
