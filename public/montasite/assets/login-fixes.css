@@ -1,0 +1,20 @@
+/* Keep the decorative card border behind the interactive controls. */
+.login-card::before {
+  pointer-events: none;
+}
+
+.login-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.password-field button {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.password-field button:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

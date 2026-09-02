@@ -64,7 +64,10 @@ export async function onRequestPost({ request, env }) {
       });
       sent = response.ok;
     }
-  } catch {
+  } catch (error) {
+    // Keep the browser message generic, but leave a safe diagnostic in the
+    // Pages runtime log so email-binding failures can be identified quickly.
+    console.error("MontaSite email delivery failed", error instanceof Error ? error.message : String(error));
     sent = false;
   }
 

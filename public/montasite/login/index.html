@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/montasite/assets/montasite.css">
+  <link rel="stylesheet" href="/montasite/assets/login-fixes.css">
 </head>
 <body class="login-page">
   <main class="login-shell">
@@ -19,7 +20,7 @@
     <section class="login-panel"><div class="login-card">
       <div class="login-card-head"><span class="status-dot"></span><small>AMBIENTE PROTEGIDO</small></div>
       <div id="login-step"><p class="eyebrow">Bem-vindo de volta</p><h2>Entre no<br>MontaSite.</h2><p class="login-intro">Use sua conta administrativa. Depois da senha, enviaremos um código de 6 dígitos para o e-mail cadastrado.</p>
-        <form id="login-form"><label class="field"><span>E-mail</span><input name="email" type="email" autocomplete="username" value="marcelo@digify.live" required></label><label class="field"><span>Senha</span><div class="password-field"><input name="password" type="password" autocomplete="current-password" required><button type="button" id="toggle-password" aria-label="Mostrar senha">Mostrar</button></div></label><button class="primary-action" type="submit"><span>Continuar</span><b>↗</b></button></form>
+        <form id="login-form"><label class="field"><span>E-mail</span><input name="email" type="email" autocomplete="username" value="marcelo@digify.live" required></label><label class="field"><span>Senha</span><div class="password-field"><input name="password" type="password" autocomplete="current-password" required><button type="button" id="toggle-password" aria-label="Mostrar senha" aria-pressed="false">Mostrar</button></div></label><button class="primary-action" type="submit"><span>Continuar</span><b>↗</b></button></form>
       </div>
       <div id="code-step" hidden><p class="eyebrow">Segunda etapa</p><h2>Confira<br>seu e-mail.</h2><p class="login-intro">Enviamos um código de uso único para <strong id="masked-email"></strong>. Ele expira em 10 minutos.</p>
         <form id="code-form"><label class="field"><span>Código de 6 dígitos</span><input class="code-input" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="000000" required></label><button class="primary-action" type="submit"><span>Entrar no painel</span><b>→</b></button><button class="text-action" type="button" id="back-login">Voltar e enviar outro código</button></form>
@@ -29,4 +30,3 @@
     </div></section>
   </main><script src="/montasite/assets/login.js"></script>
 </body></html>
-
