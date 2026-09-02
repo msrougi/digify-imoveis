@@ -6,7 +6,20 @@ import { spawnSync } from "node:child_process";
 
 const projectName = "digify-imoveis";
 const encode = value => Buffer.from(value).toString("base64url");
-const password = `${encode(crypto.randomBytes(18))}!Aa9`;
+const password = String(process.env.MONTASITE_PASSWORD || "");
+const passwordRequirements = [
+  [password.length >= 14, "pelo menos 14 caracteres"],
+  [/[a-z]/.test(password), "uma letra minúscula"],
+  [/[A-Z]/.test(password), "uma letra maiúscula"],
+  [/\d/.test(password), "um número"],
+  [/[^A-Za-z0-9]/.test(password), "um símbolo"]
+];
+const missingRequirements = passwordRequirements.filter(([valid]) => !valid).map(([, label]) => label);
+if (missingRequirements.length) {
+  console.error(`A senha precisa ter ${missingRequirements.join(", ")}.`);
+  process.exit(1);
+}
+
 const iterations = 210000;
 const salt = crypto.randomBytes(18);
 const passwordHash = crypto.pbkdf2Sync(password, salt, iterations, 32, "sha256");
@@ -45,9 +58,8 @@ try {
 
   console.log("\n============================================================");
   console.log("CONFIGURAÇÃO BASE CONCLUÍDA");
-  console.log("\nSENHA NOVA DO DIGIFY MONTASITE:\n");
-  console.log(password);
-  console.log("\nGuarde-a agora. Não envie esta senha por chat ou e-mail.");
+  console.log("Sua senha pessoal foi protegida e cadastrada com sucesso.");
+  console.log("Ela não foi salva em arquivo e não será exibida.");
   console.log("============================================================\n");
 } catch (error) {
   console.error("\nNão foi possível cadastrar os secrets:", error.message);
