@@ -17,8 +17,8 @@ const articleSchedule = () => {
   const year = Number(parts.year), month = Number(parts.month), day = Number(parts.day);
   const calendar = new Date(Date.UTC(year, month - 1, day + delayDays));
   const date = `${calendar.getUTCFullYear()}-${String(calendar.getUTCMonth() + 1).padStart(2, "0")}-${String(calendar.getUTCDate()).padStart(2, "0")}`;
-  const hour = randomInt(9, 20), minute = randomInt(0, 11) * 5;
-  return { delayDays, local: `${date}T${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00-03:00`, timeZone: "America/Sao_Paulo" };
+  const hour = randomInt(7, 22), minute = randomInt(0, 59), second = randomInt(0, 59);
+  return { delayDays, local: `${date}T${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:${String(second).padStart(2, "0")}-03:00`, timeZone: "America/Sao_Paulo" };
 };
 
 const validatePayload = payload => {

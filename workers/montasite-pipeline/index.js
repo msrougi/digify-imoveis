@@ -161,7 +161,7 @@ function renderSite(input, content, pdf) {
   const testimonialHtml = testimonials.map((item, index) => {
     const key = input.storedFiles?.find(value => String(value).includes("depoimento-" + (index + 1) + ".")) || "depoimento-" + (index + 1) + ".jpg";
     const extension = String(key).split(".").pop().toLowerCase();
-    return "<figure class='testimonial'><img src='" + asset("depoimento-" + (index + 1) + "." + extension) + "' alt='Foto de " + escapeHtml(item.name) + "' loading='lazy'><blockquote>“" + escapeHtml(item.text) + "”</blockquote><figcaption>" + escapeHtml(item.name) + "</figcaption></figure>";
+    return "<figure class='testimonial' style='display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px 14px;align-items:start;padding:18px'><img src='" + asset("depoimento-" + (index + 1) + "." + extension) + "' alt='Foto de " + escapeHtml(item.name) + "' loading='lazy' style='grid-row:1/3;width:62px;height:62px;margin:0;border-radius:50%;object-fit:cover;object-position:50% 24%'><blockquote style='grid-column:2;margin:0;font-size:14px;line-height:1.6'>“" + escapeHtml(item.text) + "”</blockquote><figcaption style='grid-column:2;margin:0;font-size:12px'>" + escapeHtml(item.name) + "</figcaption></figure>";
   }).join("");
   const source = pdf?.sourceKey ? "<a class='source-link' href='" + asset("material.pdf") + "' target='_blank' rel='noopener'>Abrir material original (PDF) ↗</a>" : pdf?.source ? "<span class='source-note'>Material consultado: " + escapeHtml(pdf.source) + "</span>" : "<span class='source-note'>Material original aguardando confirmação.</span>";
   const jsonld = escapeJson({

@@ -19,7 +19,7 @@
           <div class="section-heading"><span>01</span><div><p class="eyebrow">Descoberta</p><h2>Encontre o empreendimento.</h2><small>Primeiro o bairro e a tipologia. Depois, os PDFs compatíveis.</small></div></div>
           <div class="field-grid"><label class="field"><span>Bairro</span><input id="bairro" name="bairro" list="bairros" autocomplete="off" placeholder="Ex.: Moema" required><datalist id="bairros"></datalist></label><fieldset class="field"><legend>Tipologia</legend><div class="segmented three"><label><input type="radio" name="tipologia" value="Studio / 1 dormitório" checked><span>Studio / 1 dorm.</span></label><label><input type="radio" name="tipologia" value="2 dormitórios"><span>2 dorms.</span></label><label><input type="radio" name="tipologia" value="3 dormitórios ou mais"><span>3 dorms. ou +</span></label></div></fieldset></div>
           <button id="search-pdfs" class="secondary-action" type="button"><span>Buscar PDFs compatíveis</span><b>⌁</b></button>
-          <div class="pdf-results" id="pdf-results" hidden><label class="field"><span>Materiais encontrados</span><select id="pdf" name="pdf"><option value="">Selecione o PDF</option></select></label><div class="or"><span>ou</span></div><label class="upload"><input id="pdf-upload" type="file" accept="application/pdf"><b>＋</b><span><strong>Enviar outro PDF</strong><small>PDF original, preferencialmente até 25 MB.</small></span></label></div>
+          <div class="pdf-results" id="pdf-results" hidden><div class="field"><span>Materiais encontrados</span><div id="pdf-list" class="pdf-list" role="list" aria-live="polite"></div></div><div class="or"><span>ou</span></div><label class="upload"><input id="pdf-upload" type="file" accept="application/pdf"><b>＋</b><span><strong>Enviar outro PDF</strong><small>PDF original, preferencialmente até 25 MB.</small></span></label></div>
         </section>
 
         <section class="glass-card form-section" id="project-section" hidden>
@@ -29,7 +29,7 @@
         </section>
 
         <section class="glass-card form-section" id="testimonials-section" hidden>
-          <div class="section-heading"><span>03</span><div><p class="eyebrow">Prova social</p><h2>Adicione 3 depoimentos reais.</h2><small>Nome, texto e foto correspondente são obrigatórios. A foto não é associada automaticamente a nenhuma pessoa.</small></div></div><div class="testimonial-grid" id="testimonial-grid"></div><p class="field-hint">Fotos quadradas em JPG ou WebP, mínimo 600×600 px. Recomendado: 800×800 px e até 500 KB.</p>
+          <div class="section-heading"><span>03</span><div><p class="eyebrow">Prova social</p><h2>Adicione 3 depoimentos reais.</h2><small>Nome, texto e foto correspondente são obrigatórios. Envie uma foto com o rosto visível; o MontaSite fará o recorte.</small></div></div><div class="testimonial-grid" id="testimonial-grid"></div><p class="field-hint">JPG, PNG ou WebP, vertical ou horizontal, mínimo 480 px e até 8 MB. A prévia mostra o enquadramento final do rosto.</p>
         </section>
 
         <section class="glass-card form-section" id="articles-section" hidden>
