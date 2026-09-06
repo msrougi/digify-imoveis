@@ -73,8 +73,8 @@
       try{const faces=await new window.FaceDetector({fastMode:true,maxDetectedFaces:1}).detect(bitmap);if(faces[0]?.boundingBox){const box=faces[0].boundingBox;centerX=box.x+box.width/2;centerY=box.y+box.height/2;faceDetected=true;}}catch{/* navegador usa enquadramento superior central */}
     }
     const sourceX=clamp(centerX-size/2,0,width-size),sourceY=clamp(centerY-size*.36,0,height-size);
-    const canvas=document.createElement("canvas");canvas.width=800;canvas.height=800;
-    const context=canvas.getContext("2d",{alpha:false});context.drawImage(bitmap,sourceX,sourceY,size,size,0,0,800,800);bitmap.close();
+    const canvas=document.createElement("canvas");canvas.width=300;canvas.height=300;
+    const context=canvas.getContext("2d",{alpha:false});context.drawImage(bitmap,sourceX,sourceY,size,size,0,0,300,300);bitmap.close();
     const blob=await canvasBlob(canvas),base=file.name.replace(/\.[^.]+$/,"").replace(/[^a-z0-9_-]+/gi,"-");
     return{file:new File([blob],`${base||"retrato"}-recorte.webp`,{type:"image/webp"}),faceDetected};
   }

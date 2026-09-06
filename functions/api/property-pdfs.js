@@ -2,6 +2,7 @@ import { json, requireSession } from "../_shared/montasite-auth.js";
 
 const MAX_RESULTS = 18;
 const MAX_PROBES = 24;
+const GENERIC_PDF_HOSTS = /(?:^|\.)(?:workspace\.google\.com|smallpdf\.com|ilovepdf\.com|adobe\.com|canva\.com)$/i;
 
 const clean = (value, length = 180) => String(value || "").replace(/\s+/g, " ").trim().slice(0, length);
 const normalize = value => clean(value, 500).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -24,16 +25,16 @@ const safeHttpsUrl = value => {
 
 const buildQueries = (bairro, tipologia) => {
   const type = tipologia === "Studio / 1 dormitório"
-    ? '(studio OR "1 dormitório")'
+    ? '("studio" OR "studios" OR "1 dormitório" OR "1 dorm" OR "1 suíte")'
     : tipologia === "2 dormitórios"
-      ? '"2 dormitórios"'
-      : '("3 dormitórios" OR "4 dormitórios")';
+      ? '("2 dormitórios" OR "2 dorm" OR "2 suítes")'
+      : '("3 dormitórios" OR "4 dormitórios" OR "3 dorm" OR "4 dorm" OR "3 suítes" OR "4 suítes")';
   return [
-    `filetype:pdf "${bairro}" (lançamento OR empreendimento) residencial "São Paulo"`,
-    `filetype:pdf "${bairro}" (book OR apresentação) apartamento`,
-    `filetype:pdf "${bairro}" ${type} (incorporadora OR construtora)`,
-    `filetype:pdf "${bairro}" (memorial OR "ficha técnica") residencial`,
-    `filetype:pdf "${bairro}" (2027 OR 2028 OR 2029) imóvel`
+    `filetype:pdf "${bairro}" ${type} (lançamento OR empreendimento OR residencial) "São Paulo"`,
+    `filetype:pdf "${bairro}" ${type} (book OR "book digital" OR apresentação OR catálogo) imóvel`,
+    `filetype:pdf "${bairro}" ${type} (incorporadora OR construtora) (planta OR lazer OR "ficha técnica")`,
+    `filetype:pdf "${bairro}" ${type} (memorial OR "ficha técnica" OR implantação) residencial`,
+    `filetype:pdf "${bairro}" ${type} (2027 OR 2028 OR 2029) (entrega OR previsão OR obras)`
   ];
 };
 
@@ -52,8 +53,21 @@ const candidateFrom = (item, queryIndex) => {
 
 const looksLikePdf = item => {
   const path = item.url.pathname.toLowerCase();
-  const copy = normalize(`${item.title} ${item.snippet} ${item.mime}`);
-  return path.endsWith(".pdf") || path.includes(".pdf/") || /application\/pdf|adobe acrobat/.test(copy) || /\bpdf\b/.test(copy);
+  return path.endsWith(".pdf") || path.includes(".pdf/") || /application\/pdf/i.test(item.mime);
+};
+
+const candidateContext = (item, bairro) => {
+  const copy = normalize(`${item.title} ${item.snippet} ${item.url.hostname} ${item.url.pathname}`);
+  const bairroTokens = normalize(bairro).split(/\s+/).filter(token => token.length > 2);
+  const hasBairro = bairroTokens.length > 0 && bairroTokens.every(token => copy.includes(token));
+  const hasRealEstate = /lancamento|empreendimento|residencial|apartamento|studio|incorporadora|construtora|planta|dormitorio|suite|imovel|edificio|unidade|lazer/.test(copy);
+  return { copy, hasBairro, hasRealEstate };
+};
+
+const isRelevantCandidate = (item, bairro) => {
+  if (GENERIC_PDF_HOSTS.test(item.url.hostname)) return false;
+  const context = candidateContext(item, bairro);
+  return context.hasBairro && context.hasRealEstate;
 };
 
 const probePdf = async item => {
@@ -79,9 +93,9 @@ const probePdf = async item => {
 };
 
 const relevance = (item, bairro, tipologia) => {
-  const copy = normalize(`${item.title} ${item.snippet} ${item.url.hostname} ${item.url.pathname}`);
-  const bairroTokens = normalize(bairro).split(/\s+/).filter(token => token.length > 2);
-  let score = bairroTokens.reduce((total, token) => total + (copy.includes(token) ? 7 : 0), 0);
+  const { copy, hasBairro, hasRealEstate } = candidateContext(item, bairro);
+  let score = hasBairro ? 20 : 0;
+  if (hasRealEstate) score += 14;
   if (/lancamento|empreendimento|residencial|apartamento|studio/.test(copy)) score += 8;
   if (/book|apresentacao|ficha tecnica|memorial/.test(copy)) score += 5;
   if (/2027|2028|2029/.test(copy)) score += 5;
@@ -207,7 +221,7 @@ export async function onRequestGet({ request, env }) {
       const key = item.link.replace(/\/$/, "").toLowerCase();
       if (!unique.has(key)) unique.set(key, item);
     }
-    const candidates = [...unique.values()].slice(0, MAX_PROBES);
+    const candidates = [...unique.values()].filter(item => isRelevantCandidate(item, bairro)).slice(0, MAX_PROBES);
     const verified = (await Promise.all(candidates.map(probePdf))).filter(Boolean);
     return json({
       ok: true,
