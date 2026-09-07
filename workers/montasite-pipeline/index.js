@@ -23,6 +23,17 @@ function extractPdfText(bytes) {
   }
   return [...new Set(found)].join(" ").slice(0, 45000);
 }
+function verifySelectedPhase(pdfText, selectedPhase) {
+  const copy = text(pdfText).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  if (!copy) return { status: "unknown", detected: null, message: "A fase não pôde ser confirmada automaticamente porque o PDF não possui camada de texto recuperável." };
+  const launchSignals = [...copy.matchAll(/lancamento|breve lancamento|na planta|em construcao|obras em andamento|previsao de entrega/g)].length;
+  const readySignals = [...copy.matchAll(/pronto para morar|pronta entrega|entrega imediata|habite.?se|empreendimento concluido|unidades entregues/g)].length;
+  if (!launchSignals && !readySignals) return { status: "unknown", detected: null, message: "O texto do PDF não trouxe evidência suficiente para confirmar a fase; ela permanecerá como ‘a confirmar’." };
+  if (launchSignals === readySignals) return { status: "unknown", detected: null, message: "O PDF trouxe sinais conflitantes sobre a fase; ela permanecerá como ‘a confirmar’." };
+  const detected = launchSignals > readySignals ? "Lançamento" : "Pronta entrega";
+  if (detected !== selectedPhase) return { status: "mismatch", detected, message: `O PDF indica “${detected}”, diferente da fase selecionada “${selectedPhase}”.` };
+  return { status: "confirmed", detected, message: `Fase “${selectedPhase}” confirmada pela leitura do PDF.` };
+}
 async function loadPdf(env, input) {
   const keys = Array.isArray(input.storedFiles) ? input.storedFiles : [];
   const storedKey = keys.find(key => /\/material\.pdf$/i.test(String(key)));
@@ -277,6 +288,12 @@ async function runPipeline(env, input) {
     const pdfMessage = pdf.text ? "PDF lido: " + pdf.text.length.toLocaleString("pt-BR") + " caracteres recuperados." : "PDF recebido sem camada de texto recuperável; o material original ficou preservado para conferência.";
     await updateJob(env, jobId, { currentStep: step, percent: 42, pdfTextLength: pdf.text.length });
     await sendEvent(env, input, { step, status: "running", percent: 42, message: pdfMessage });
+    const phaseVerification = verifySelectedPhase(pdf.text, text(input.payload?.fase, "Lançamento"));
+    await updateJob(env, jobId, { currentStep: step, percent: 47, phaseVerification });
+    await sendEvent(env, input, { step, status: phaseVerification.status === "mismatch" ? "failed" : "running", percent: 47, message: phaseVerification.message });
+    if (phaseVerification.status === "mismatch") throw new Error(phaseVerification.message + " Selecione a fase correta antes de publicar.");
+    input.payload.property.phaseVerification = phaseVerification.status;
+    input.prompt = text(input.prompt) + `\n\nVERIFICAÇÃO AUTOMÁTICA DA FASE\n${phaseVerification.message}\nSe a fase estiver como “a confirmar”, não a apresente como fato confirmado.`;
     step = "research";
     const generated = await generateContent(env, input, pdf.text);
     await updateJob(env, jobId, { currentStep: step, percent: 63, aiUsed: generated.usedAi, aiNote: generated.reason });

@@ -23,18 +23,23 @@ const safeHttpsUrl = value => {
   }
 };
 
-const buildQueries = (bairro, tipologia) => {
+const buildQueries = (bairro, tipologia, fase) => {
   const type = tipologia === "Studio / 1 dormitório"
     ? '("studio" OR "studios" OR "1 dormitório" OR "1 dorm" OR "1 suíte")'
     : tipologia === "2 dormitórios"
-      ? '("2 dormitórios" OR "2 dorm" OR "2 suítes")'
-      : '("3 dormitórios" OR "4 dormitórios" OR "3 dorm" OR "4 dorm" OR "3 suítes" OR "4 suítes")';
+      ? '("2 dormitórios" OR "2 dorm" OR "2 quartos" OR "2 suítes")'
+      : '("3 dormitórios" OR "4 dormitórios" OR "3 dorm" OR "4 dorm" OR "3 quartos" OR "4 quartos" OR "3 suítes" OR "4 suítes")';
+  const phase = fase === "Pronta entrega"
+    ? '("pronto para morar" OR "pronta entrega" OR "entrega imediata" OR "habite-se" OR entregue)'
+    : '(lançamento OR "breve lançamento" OR "na planta" OR "em construção" OR obras)';
   return [
-    `filetype:pdf "${bairro}" ${type} (lançamento OR empreendimento OR residencial) "São Paulo"`,
-    `filetype:pdf "${bairro}" ${type} (book OR "book digital" OR apresentação OR catálogo) imóvel`,
-    `filetype:pdf "${bairro}" ${type} (incorporadora OR construtora) (planta OR lazer OR "ficha técnica")`,
-    `filetype:pdf "${bairro}" ${type} (memorial OR "ficha técnica" OR implantação) residencial`,
-    `filetype:pdf "${bairro}" ${type} (2027 OR 2028 OR 2029) (entrega OR previsão OR obras)`
+    `filetype:pdf "${bairro}" ${type} ${phase} (empreendimento OR residencial) "São Paulo"`,
+    `filetype:pdf "${bairro}" ${type} ${phase} (book OR "book digital" OR apresentação OR catálogo) imóvel`,
+    `filetype:pdf "${bairro}" ${type} ${phase} (incorporadora OR construtora) (planta OR lazer OR "ficha técnica")`,
+    `filetype:pdf "${bairro}" ${type} ${phase} (memorial OR "ficha técnica" OR implantação) residencial`,
+    fase === "Pronta entrega"
+      ? `filetype:pdf "${bairro}" ${type} ${phase} (concluído OR entregue OR decorado)`
+      : `filetype:pdf "${bairro}" ${type} ${phase} (2027 OR 2028 OR 2029) (entrega OR previsão)`
   ];
 };
 
@@ -56,18 +61,26 @@ const looksLikePdf = item => {
   return path.endsWith(".pdf") || path.includes(".pdf/") || /application\/pdf/i.test(item.mime);
 };
 
-const candidateContext = (item, bairro) => {
+const candidateContext = (item, bairro, tipologia, fase) => {
   const copy = normalize(`${item.title} ${item.snippet} ${item.url.hostname} ${item.url.pathname}`);
   const bairroTokens = normalize(bairro).split(/\s+/).filter(token => token.length > 2);
   const hasBairro = bairroTokens.length > 0 && bairroTokens.every(token => copy.includes(token));
   const hasRealEstate = /lancamento|empreendimento|residencial|apartamento|studio|incorporadora|construtora|planta|dormitorio|suite|imovel|edificio|unidade|lazer/.test(copy);
-  return { copy, hasBairro, hasRealEstate };
+  const hasType = tipologia === "Studio / 1 dormitório"
+    ? /studio|studios|1 dormitorio|1 dorm\b|1 quarto|1 suite/.test(copy)
+    : tipologia === "2 dormitórios"
+      ? /2 dormitorios|2 dorm\b|2 quartos|2 suites/.test(copy)
+      : /[34] dormitorios|[34] dorm\b|[34] quartos|[34] suites/.test(copy);
+  const hasPhase = fase === "Pronta entrega"
+    ? /pronto para morar|pronta entrega|entrega imediata|habite.?se|\bentregue\b|\bconcluido\b/.test(copy)
+    : /lancamento|breve lancamento|na planta|em construcao|\bem obras\b|\b202[7-9]\b/.test(copy);
+  return { copy, hasBairro, hasRealEstate, hasType, hasPhase };
 };
 
-const isRelevantCandidate = (item, bairro) => {
+const isRelevantCandidate = (item, bairro, tipologia, fase) => {
   if (GENERIC_PDF_HOSTS.test(item.url.hostname)) return false;
-  const context = candidateContext(item, bairro);
-  return context.hasBairro && context.hasRealEstate;
+  const context = candidateContext(item, bairro, tipologia, fase);
+  return context.hasBairro && context.hasRealEstate && context.hasType && context.hasPhase;
 };
 
 const probePdf = async item => {
@@ -92,10 +105,12 @@ const probePdf = async item => {
   }
 };
 
-const relevance = (item, bairro, tipologia) => {
-  const { copy, hasBairro, hasRealEstate } = candidateContext(item, bairro);
+const relevance = (item, bairro, tipologia, fase) => {
+  const { copy, hasBairro, hasRealEstate, hasType, hasPhase } = candidateContext(item, bairro, tipologia, fase);
   let score = hasBairro ? 20 : 0;
   if (hasRealEstate) score += 14;
+  if (hasType) score += 14;
+  if (hasPhase) score += 14;
   if (/lancamento|empreendimento|residencial|apartamento|studio/.test(copy)) score += 8;
   if (/book|apresentacao|ficha tecnica|memorial/.test(copy)) score += 5;
   if (/2027|2028|2029/.test(copy)) score += 5;
@@ -111,8 +126,8 @@ const resultName = title => clean(title, 160)
   .replace(/\.(?:pdf)\b.*$/i, "")
   .trim() || "Material imobiliário";
 
-const shapeItems = (items, bairro, tipologia) => items
-  .map(item => ({ ...item, score: relevance(item, bairro, tipologia) }))
+const shapeItems = (items, bairro, tipologia, fase) => items
+  .map(item => ({ ...item, score: relevance(item, bairro, tipologia, fase) }))
   .sort((a, b) => b.score - a.score)
   .slice(0, MAX_RESULTS)
   .map((item, index) => {
@@ -125,7 +140,8 @@ const shapeItems = (items, bairro, tipologia) => items
       pdf: decodeURIComponent(item.url.pathname.split("/").pop() || `material-${index + 1}.pdf`).slice(0, 180),
       pdfUrl: item.link,
       sourceHost: item.url.hostname.replace(/^www\./, ""),
-      delivery: year ? `previsão citada: ${year}` : "prazo a confirmar",
+      phase: fase,
+      delivery: year ? `previsão citada: ${year}` : fase === "Pronta entrega" ? "pronta entrega — confirmar no PDF" : "prazo a confirmar",
       types: [tipologia],
       heat: 50,
       searches: "a medir",
@@ -199,9 +215,11 @@ export async function onRequestGet({ request, env }) {
   const params = new URL(request.url).searchParams;
   const bairro = clean(params.get("bairro"), 80);
   const tipologia = clean(params.get("tipologia"), 80);
-  if (!bairro || !tipologia) return json({ ok: false, error: "Bairro e tipologia são obrigatórios." }, 400);
+  const fase = clean(params.get("fase"), 40);
+  if (!bairro || !tipologia || !fase) return json({ ok: false, error: "Bairro, tipologia e fase são obrigatórios." }, 400);
+  if (!["Lançamento", "Pronta entrega"].includes(fase)) return json({ ok: false, error: "Fase inválida." }, 400);
 
-  const queries = buildQueries(bairro, tipologia);
+  const queries = buildQueries(bairro, tipologia, fase);
   try {
     let provider = "";
     let groups = [];
@@ -221,7 +239,7 @@ export async function onRequestGet({ request, env }) {
       const key = item.link.replace(/\/$/, "").toLowerCase();
       if (!unique.has(key)) unique.set(key, item);
     }
-    const candidates = [...unique.values()].filter(item => isRelevantCandidate(item, bairro)).slice(0, MAX_PROBES);
+    const candidates = [...unique.values()].filter(item => isRelevantCandidate(item, bairro, tipologia, fase)).slice(0, MAX_PROBES);
     const verified = (await Promise.all(candidates.map(probePdf))).filter(Boolean);
     return json({
       ok: true,
@@ -229,7 +247,7 @@ export async function onRequestGet({ request, env }) {
       provider,
       queriesRun: groups.length,
       candidatesChecked: candidates.length,
-      items: shapeItems(verified, bairro, tipologia)
+      items: shapeItems(verified, bairro, tipologia, fase)
     });
   } catch (error) {
     return json({ ok: false, connected: true, error: error instanceof Error ? error.message : "Falha na busca.", items: [] }, 502);
