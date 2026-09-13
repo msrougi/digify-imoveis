@@ -383,6 +383,17 @@ ${posts
 fs.rmSync(DIST, { recursive: true, force: true });
 copiarPasta(path.join(RAIZ, 'public'), DIST);
 
+// PDF.js roda no navegador do operador: ele transforma as páginas visuais do
+// book em WebP antes de o job ser enviado ao Cloudflare. Mantemos os módulos
+// versionados pelo package-lock e os publicamos no mesmo domínio para evitar
+// dependência de CDN/CORS durante a criação de uma página.
+const pdfJsBuild = path.join(RAIZ, 'node_modules', 'pdfjs-dist', 'build');
+const pdfJsPublic = path.join(DIST, 'montasite', 'vendor', 'pdfjs');
+fs.mkdirSync(pdfJsPublic, { recursive: true });
+for (const file of ['pdf.min.mjs', 'pdf.worker.min.mjs']) {
+  fs.copyFileSync(path.join(pdfJsBuild, file), path.join(pdfJsPublic, file));
+}
+
 const dirPosts = path.join(RAIZ, 'content/posts');
 const posts = fs
   .readdirSync(dirPosts)

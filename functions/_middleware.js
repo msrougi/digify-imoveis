@@ -14,7 +14,7 @@ const withInjectedHtml = (response, html, extraHeaders = {}) => {
   headers.set("cache-control", "public, max-age=60, must-revalidate");
   return new Response(html, { status: response.status, statusText: response.statusText, headers });
 };
-const siteCard = site => "<a class='card' href='/" + escapeHtml(site.slug) + "/'><div class='card-media dynamic-card-media' style='background:linear-gradient(135deg,#171044,#0b665f)'><span class='badge'>" + escapeHtml(site.fase || "Novo") + "</span></div><div class='card-body'><p class='card-loc'>" + escapeHtml(site.bairro || "São Paulo") + " · São Paulo</p><h3>" + escapeHtml(site.name || "Novo empreendimento") + "</h3><p>" + escapeHtml(site.description || "Página exclusiva com informações, valores e atendimento direto.") + "</p><div class='card-specs'><span>" + escapeHtml(site.tipologia || "Imóvel") + "</span><span>Entrega: " + escapeHtml(site.delivery || "a confirmar") + "</span></div><span class='card-link'>Ver página do imóvel <span aria-hidden='true'>→</span></span></div></a>";
+const siteCard = site => "<a class='card' href='/" + escapeHtml(site.slug) + "/'><div class='card-media dynamic-card-media' style='" + (site.imageUrl ? "background-image:url(&quot;" + escapeHtml(site.imageUrl) + "&quot;);background-size:cover;background-position:center" : "background:linear-gradient(135deg,#171044,#0b665f)") + "'><span class='badge'>" + escapeHtml(site.fase || "Novo") + "</span></div><div class='card-body'><p class='card-loc'>" + escapeHtml(site.bairro || "São Paulo") + " · São Paulo</p><h3>" + escapeHtml(site.name || "Novo empreendimento") + "</h3><p>" + escapeHtml(site.description || "Página exclusiva com informações, valores e atendimento direto.") + "</p><div class='card-specs'><span>" + escapeHtml(site.tipologia || "Imóvel") + "</span><span>Entrega: " + escapeHtml(site.delivery || "a confirmar") + "</span></div><span class='card-link'>Ver página do imóvel <span aria-hidden='true'>→</span></span></div></a>";
 const articleCard = article => "<a class='card' href='/blog/" + escapeHtml(article.slug) + "/'><div class='card-body'><p class='card-loc'>MontaSite · " + escapeHtml(article.bairro || "São Paulo") + "</p><h3>" + escapeHtml(article.title || "Nova matéria") + "</h3><p>" + escapeHtml(article.description || "Leia a matéria completa no blog da Digify Imóveis.") + "</p><span class='card-link'>Ler matéria <span aria-hidden='true'>→</span></span></div></a>";
 
 async function serveAsset(pathname, env) {
@@ -23,7 +23,7 @@ async function serveAsset(pathname, env) {
   if (parts.length !== 3 || parts[0] !== "__montasite-assets") return null;
   const jobId = decodeURIComponent(parts[1] || "");
   const filename = decodeURIComponent(parts[2] || "");
-  if (!/^[0-9a-f-]{20,80}$/i.test(jobId) || !/^(depoimento-[1-3]\.(?:jpg|png|webp)|material\.pdf)$/i.test(filename)) return new Response("Not found", { status: 404 });
+  if (!/^[0-9a-f-]{20,80}$/i.test(jobId) || !/^(depoimento-[1-3]\.(?:jpg|png|webp)|empreendimento-[1-7]\.(?:jpg|png|webp)|material\.pdf)$/i.test(filename)) return new Response("Not found", { status: 404 });
   const object = await env.MONTASITE_UPLOADS.get(jobId + "/" + filename);
   if (!object) return new Response("Not found", { status: 404 });
   const headers = new Headers();

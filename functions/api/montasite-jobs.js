@@ -29,6 +29,7 @@ const validatePayload = payload => {
   if (!["Studio / 1 dormitório", "2 dormitórios", "3 dormitórios ou mais"].includes(payload?.tipologia)) errors.push("Tipologia inválida.");
   if (!["Lançamento", "Pronta entrega"].includes(payload?.fase)) errors.push("Fase inválida.");
   if (!payload?.article?.title || !payload?.article?.slug) errors.push("Escolha exatamente uma pauta.");
+  if (!Array.isArray(payload?.property?.images) || payload.property.images.length < 1 || payload.property.images.length > 7) errors.push("Prepare entre 1 e 7 imagens reais do PDF.");
   if (!Array.isArray(payload?.testimonials) || payload.testimonials.length !== 3) errors.push("São necessários exatamente três depoimentos.");
   for (const [index, testimonial] of (payload?.testimonials || []).entries()) {
     if (!testimonial?.name?.trim() || !testimonial?.text?.trim()) errors.push(`Complete o depoimento ${index + 1}.`);
@@ -81,30 +82,46 @@ export async function onRequest({ request, env, waitUntil }) {
       return json({ ok: false, error: `A foto ${index + 1} deve ser JPG, PNG ou WebP e ter no máximo 2 MB.` }, 422);
     }
   }
+  const propertyImages = Array.from({ length: 7 }, (_, index) => form.get(`property_image_${index + 1}`)).filter(file => file instanceof File && file.size > 0);
+  if (propertyImages.length < 1 || propertyImages.length !== payload.property.images.length) {
+    return json({ ok: false, error: "As imagens do empreendimento não foram recebidas corretamente. Selecione o PDF novamente." }, 422);
+  }
+  for (const [index, image] of propertyImages.entries()) {
+    if (!allowedImageTypes.has(image.type) || image.size > 3 * 1024 * 1024) {
+      return json({ ok: false, error: `A imagem do empreendimento ${index + 1} deve ser JPG, PNG ou WebP e ter no máximo 3 MB.` }, 422);
+    }
+  }
   const uploadedPdf = form.get("uploaded_pdf");
-  if (uploadedPdf instanceof File && (uploadedPdf.type !== "application/pdf" || uploadedPdf.size > 25 * 1024 * 1024)) {
-    return json({ ok: false, error: "O PDF enviado deve ter no máximo 25 MB." }, 422);
+  if (!(uploadedPdf instanceof File) || uploadedPdf.size <= 0 || uploadedPdf.type !== "application/pdf" || uploadedPdf.size > 25 * 1024 * 1024) {
+    return json({ ok: false, error: "O PDF original é obrigatório e deve ter no máximo 25 MB." }, 422);
+  }
+  if (await uploadedPdf.slice(0, 5).text() !== "%PDF-") {
+    return json({ ok: false, error: "O arquivo enviado não possui uma assinatura PDF válida." }, 422);
   }
 
   const id = crypto.randomUUID(), now = new Date().toISOString(), schedule = articleSchedule();
   const prompt = buildMontaSitePrompt(payload, schedule);
   const events = [
     { at: now, step: "validate", percent: 5, message: "Sessão e dados obrigatórios validados." },
-    { at: now, step: "validate", percent: 10, message: "Três depoimentos e suas fotos foram conferidos." }
+    { at: now, step: "validate", percent: 10, message: `Três depoimentos e ${propertyImages.length} imagens do empreendimento foram conferidos.` }
   ];
   const storedFiles = [];
+  for (const [index, image] of propertyImages.entries()) {
+    const extension = image.type === "image/png" ? "png" : image.type === "image/jpeg" ? "jpg" : "webp";
+    const key = `${id}/empreendimento-${index + 1}.${extension}`;
+    await env.MONTASITE_UPLOADS.put(key, image.stream(), { httpMetadata: { contentType: image.type }, customMetadata: { originalName: image.name, pdfPage: String(payload.property.images[index]?.page || "") } });
+    storedFiles.push(key);
+  }
   for (const [index, photo] of photos.entries()) {
     const extension = photo.type === "image/png" ? "png" : photo.type === "image/webp" ? "webp" : "jpg";
     const key = `${id}/depoimento-${index + 1}.${extension}`;
     await env.MONTASITE_UPLOADS.put(key, photo.stream(), { httpMetadata: { contentType: photo.type }, customMetadata: { originalName: photo.name } });
     storedFiles.push(key);
   }
-  if (uploadedPdf instanceof File && uploadedPdf.size > 0) {
-    const key = `${id}/material.pdf`;
-    await env.MONTASITE_UPLOADS.put(key, uploadedPdf.stream(), { httpMetadata: { contentType: "application/pdf" }, customMetadata: { originalName: uploadedPdf.name } });
-    storedFiles.push(key);
-  }
-  events.push({ at: new Date().toISOString(), step: "pdf", percent: 16, message: "Arquivos recebidos e armazenados com segurança." });
+  const pdfKey = `${id}/material.pdf`;
+  await env.MONTASITE_UPLOADS.put(pdfKey, uploadedPdf.stream(), { httpMetadata: { contentType: "application/pdf" }, customMetadata: { originalName: uploadedPdf.name } });
+  storedFiles.push(pdfKey);
+  events.push({ at: new Date().toISOString(), step: "pdf", percent: 16, message: `${propertyImages.length} imagens do PDF e os demais arquivos foram armazenados com segurança.` });
 
   const hasPipelineBinding = Boolean(env.MONTASITE_PIPELINE && typeof env.MONTASITE_PIPELINE.fetch === "function" && env.MONTASITE_PIPELINE_SECRET);
   const hasPipelineWebhook = Boolean(env.MONTASITE_PIPELINE_WEBHOOK && env.MONTASITE_PIPELINE_SECRET);
