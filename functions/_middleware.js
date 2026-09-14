@@ -87,7 +87,7 @@ export async function onRequest(context) {
   if (pathname === "/blog/") return injectBlogIndex(await context.next(), context.env);
   if (pathname === "/sitemap.xml") return injectSitemap(await context.next(), context.env);
   if (pathname === "/blog/rss.xml") return injectRss(await context.next(), context.env);
-  if (pathname === "/autoral-moema/") return context.next();
+  if (pathname === "/autoral-moema" || pathname === "/autoral-moema/") return context.next();
   const parts = pathname.split("/").filter(Boolean);
   if (parts.length === 2 && parts[0] === "blog" && safeSlug(parts[1])) {
     const article = await dynamicJson(context.env.MONTASITE_AUTH, "article:" + parts[1], null);
