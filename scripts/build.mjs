@@ -337,6 +337,7 @@ function sitemap(posts) {
     { loc: `${SITE}/coliseu-funchal/`, pri: '0.9', freq: 'monthly' },
     { loc: `${SITE}/well-perdizes/`, pri: '0.9', freq: 'monthly' },
     { loc: `${SITE}/peak-vilaolimpia/`, pri: '0.9', freq: 'monthly' },
+    { loc: `${SITE}/autoral-moema/`, pri: '0.9', freq: 'monthly' },
     { loc: `${SITE}/blog/`, pri: '0.8', freq: 'weekly' },
     ...posts.map((p) => ({ loc: `${SITE}/blog/${p.meta.slug}`, pri: '0.7', freq: 'monthly', mod: p.meta.data })),
   ];

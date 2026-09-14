@@ -14,7 +14,11 @@ const withInjectedHtml = (response, html, extraHeaders = {}) => {
   headers.set("cache-control", "public, max-age=60, must-revalidate");
   return new Response(html, { status: response.status, statusText: response.statusText, headers });
 };
-const siteCard = site => "<a class='card' href='/" + escapeHtml(site.slug) + "/'><div class='card-media dynamic-card-media' style='" + (site.imageUrl ? "background-image:url(&quot;" + escapeHtml(site.imageUrl) + "&quot;);background-size:cover;background-position:center" : "background:linear-gradient(135deg,#171044,#0b665f)") + "'><span class='badge'>" + escapeHtml(site.fase || "Novo") + "</span></div><div class='card-body'><p class='card-loc'>" + escapeHtml(site.bairro || "São Paulo") + " · São Paulo</p><h3>" + escapeHtml(site.name || "Novo empreendimento") + "</h3><p>" + escapeHtml(site.description || "Página exclusiva com informações, valores e atendimento direto.") + "</p><div class='card-specs'><span>" + escapeHtml(site.tipologia || "Imóvel") + "</span><span>Entrega: " + escapeHtml(site.delivery || "a confirmar") + "</span></div><span class='card-link'>Ver página do imóvel <span aria-hidden='true'>→</span></span></div></a>";
+const siteCard = site => {
+  const imageUrl = site.imageUrl || (site.slug === "autoral-moema" ? "/autoral-moema/images/fachada-studios.webp" : "");
+  const mediaStyle = imageUrl ? "background-image:url(&quot;" + escapeHtml(imageUrl) + "&quot;);background-size:cover;background-position:center" : "background:linear-gradient(135deg,#171044,#0b665f)";
+  return "<a class='card' href='/" + escapeHtml(site.slug) + "/'><div class='card-media dynamic-card-media' style='" + mediaStyle + "'><span class='badge'>" + escapeHtml(site.fase || "Novo") + "</span></div><div class='card-body'><p class='card-loc'>" + escapeHtml(site.bairro || "São Paulo") + " · São Paulo</p><h3>" + escapeHtml(site.name || "Novo empreendimento") + "</h3><p>" + escapeHtml(site.description || "Página exclusiva com informações, valores e atendimento direto.") + "</p><div class='card-specs'><span>" + escapeHtml(site.tipologia || "Imóvel") + "</span><span>Entrega: " + escapeHtml(site.delivery || "a confirmar") + "</span></div><span class='card-link'>Ver página do imóvel <span aria-hidden='true'>→</span></span></div></a>";
+};
 const articleCard = article => "<a class='card' href='/blog/" + escapeHtml(article.slug) + "/'><div class='card-body'><p class='card-loc'>MontaSite · " + escapeHtml(article.bairro || "São Paulo") + "</p><h3>" + escapeHtml(article.title || "Nova matéria") + "</h3><p>" + escapeHtml(article.description || "Leia a matéria completa no blog da Digify Imóveis.") + "</p><span class='card-link'>Ler matéria <span aria-hidden='true'>→</span></span></div></a>";
 
 async function serveAsset(pathname, env) {
@@ -55,7 +59,7 @@ async function injectSitemap(response, env) {
   const sites = await dynamicJson(env.MONTASITE_AUTH, "site:index", []);
   const articles = await dynamicJson(env.MONTASITE_AUTH, "article:index", []);
   const urls = [
-    ...(Array.isArray(sites) ? sites.map(site => "<url><loc>" + SITE_ORIGIN + "/" + escapeHtml(site.slug) + "/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>") : []),
+    ...(Array.isArray(sites) ? sites.filter(site => site.slug !== "autoral-moema").map(site => "<url><loc>" + SITE_ORIGIN + "/" + escapeHtml(site.slug) + "/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>") : []),
     ...(Array.isArray(articles) ? articles.map(article => "<url><loc>" + SITE_ORIGIN + "/blog/" + escapeHtml(article.slug) + "/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>") : [])
   ];
   if (!urls.length) return response;
@@ -83,6 +87,7 @@ export async function onRequest(context) {
   if (pathname === "/blog/") return injectBlogIndex(await context.next(), context.env);
   if (pathname === "/sitemap.xml") return injectSitemap(await context.next(), context.env);
   if (pathname === "/blog/rss.xml") return injectRss(await context.next(), context.env);
+  if (pathname === "/autoral-moema/") return context.next();
   const parts = pathname.split("/").filter(Boolean);
   if (parts.length === 2 && parts[0] === "blog" && safeSlug(parts[1])) {
     const article = await dynamicJson(context.env.MONTASITE_AUTH, "article:" + parts[1], null);
