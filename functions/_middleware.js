@@ -19,7 +19,11 @@ const siteCard = site => {
   const mediaStyle = imageUrl ? "background-image:url(&quot;" + escapeHtml(imageUrl) + "&quot;);background-size:cover;background-position:center" : "background:linear-gradient(135deg,#171044,#0b665f)";
   return "<a class='card' href='/" + escapeHtml(site.slug) + "/'><div class='card-media dynamic-card-media' style='" + mediaStyle + "'><span class='badge'>" + escapeHtml(site.fase || "Novo") + "</span></div><div class='card-body'><p class='card-loc'>" + escapeHtml(site.bairro || "São Paulo") + " · São Paulo</p><h3>" + escapeHtml(site.name || "Novo empreendimento") + "</h3><p>" + escapeHtml(site.description || "Página exclusiva com informações, valores e atendimento direto.") + "</p><div class='card-specs'><span>" + escapeHtml(site.tipologia || "Imóvel") + "</span><span>Entrega: " + escapeHtml(site.delivery || "a confirmar") + "</span></div><span class='card-link'>Ver página do imóvel <span aria-hidden='true'>→</span></span></div></a>";
 };
-const articleCard = article => "<a class='card' href='/blog/" + escapeHtml(article.slug) + "/'><div class='card-body'><p class='card-loc'>MontaSite · " + escapeHtml(article.bairro || "São Paulo") + "</p><h3>" + escapeHtml(article.title || "Nova matéria") + "</h3><p>" + escapeHtml(article.description || "Leia a matéria completa no blog da Digify Imóveis.") + "</p><span class='card-link'>Ler matéria <span aria-hidden='true'>→</span></span></div></a>";
+const articleCard = article => {
+  const imageUrl = article.imageUrl || (article.slug === "morar-em-moema-perto-do-autoral-moema" ? "/autoral-moema/images/vista-moema.webp" : "");
+  const media = imageUrl ? "<div class='card-media dynamic-card-media' style='background-image:url(&quot;" + escapeHtml(imageUrl) + "&quot;);background-size:cover;background-position:center'></div>" : "";
+  return "<a class='card' href='/blog/" + escapeHtml(article.slug) + "/'>" + media + "<div class='card-body'><p class='card-loc'>MontaSite · " + escapeHtml(article.bairro || "São Paulo") + "</p><h3>" + escapeHtml(article.title || "Nova matéria") + "</h3><p>" + escapeHtml(article.description || "Leia a matéria completa no blog da Digify Imóveis.") + "</p><span class='card-link'>Ler matéria <span aria-hidden='true'>→</span></span></div></a>";
+};
 
 async function serveAsset(pathname, env) {
   if (!env.MONTASITE_UPLOADS) return null;
@@ -51,7 +55,7 @@ async function injectBlogIndex(response, env) {
   if (!Array.isArray(articles) || !articles.length) return response;
   const body = await response.text();
   if (!body.includes("MONTASITE_DYNAMIC_ARTICLES")) return response;
-  return withInjectedHtml(response, body.replace("<!-- MONTASITE_DYNAMIC_ARTICLES -->", articles.slice(0, 50).map(articleCard).join("")));
+  return withInjectedHtml(response, body.replace("<!-- MONTASITE_DYNAMIC_ARTICLES -->", articles.filter(article => article.slug !== "morar-em-moema-perto-do-autoral-moema").slice(0, 50).map(articleCard).join("")));
 }
 
 async function injectSitemap(response, env) {
@@ -60,7 +64,7 @@ async function injectSitemap(response, env) {
   const articles = await dynamicJson(env.MONTASITE_AUTH, "article:index", []);
   const urls = [
     ...(Array.isArray(sites) ? sites.filter(site => site.slug !== "autoral-moema").map(site => "<url><loc>" + SITE_ORIGIN + "/" + escapeHtml(site.slug) + "/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>") : []),
-    ...(Array.isArray(articles) ? articles.map(article => "<url><loc>" + SITE_ORIGIN + "/blog/" + escapeHtml(article.slug) + "/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>") : [])
+    ...(Array.isArray(articles) ? articles.filter(article => article.slug !== "morar-em-moema-perto-do-autoral-moema").map(article => "<url><loc>" + SITE_ORIGIN + "/blog/" + escapeHtml(article.slug) + "/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>") : [])
   ];
   if (!urls.length) return response;
   const body = await response.text();
@@ -71,7 +75,7 @@ async function injectRss(response, env) {
   if (!env.MONTASITE_AUTH || !response.ok) return response;
   const articles = await dynamicJson(env.MONTASITE_AUTH, "article:index", []);
   if (!Array.isArray(articles) || !articles.length) return response;
-  const items = articles.slice(0, 50).map(article => "<item><title>" + escapeHtml(article.title) + "</title><link>" + SITE_ORIGIN + "/blog/" + escapeHtml(article.slug) + "/</link><guid isPermaLink='true'>" + SITE_ORIGIN + "/blog/" + escapeHtml(article.slug) + "/</guid><description>" + escapeHtml(article.description || "") + "</description><pubDate>" + new Date(article.publishedAt || Date.now()).toUTCString() + "</pubDate><category>MontaSite</category></item>").join("");
+  const items = articles.filter(article => article.slug !== "morar-em-moema-perto-do-autoral-moema").slice(0, 50).map(article => "<item><title>" + escapeHtml(article.title) + "</title><link>" + SITE_ORIGIN + "/blog/" + escapeHtml(article.slug) + "/</link><guid isPermaLink='true'>" + SITE_ORIGIN + "/blog/" + escapeHtml(article.slug) + "/</guid><description>" + escapeHtml(article.description || "") + "</description><pubDate>" + new Date(article.publishedAt || Date.now()).toUTCString() + "</pubDate><category>MontaSite</category></item>").join("");
   const body = await response.text();
   return withInjectedHtml(response, body.replace("</channel>", items + "</channel>"), { "content-type": "application/rss+xml; charset=utf-8" });
 }
@@ -88,6 +92,7 @@ export async function onRequest(context) {
   if (pathname === "/sitemap.xml") return injectSitemap(await context.next(), context.env);
   if (pathname === "/blog/rss.xml") return injectRss(await context.next(), context.env);
   if (pathname === "/autoral-moema" || pathname === "/autoral-moema/") return context.next();
+  if (pathname === "/blog/morar-em-moema-perto-do-autoral-moema" || pathname === "/blog/morar-em-moema-perto-do-autoral-moema/") return context.next();
   const parts = pathname.split("/").filter(Boolean);
   if (parts.length === 2 && parts[0] === "blog" && safeSlug(parts[1])) {
     const article = await dynamicJson(context.env.MONTASITE_AUTH, "article:" + parts[1], null);

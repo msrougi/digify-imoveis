@@ -79,7 +79,7 @@ imagemAlt: "..."
 revisadoPor: "Marcelo Srougi"
 ---
 
-Texto em markdown: 700 a 1000 palavras, com 3 a 5 subtítulos em "## ", listas com "- " quando fizer sentido, **negrito** com moderação.
+Texto em markdown: 1000 a 3000 palavras, com 5 a 9 subtítulos em "## ", listas com "- " quando fizer sentido, **negrito** com moderação e uma imagem de destaque definida no front matter.
 Termine com um parágrafo curto ligando ao serviço da Digify Imóveis e um link em markdown, escolhendo o mais adequado:
 - página de anúncio: https://imoveis.digify.live/#anunciar
 - imóvel Coliseu Funchal (2 dormitórios, Vila Olímpia, Rua Funchal, a 100 metros da estação): https://imoveis.digify.live/coliseu-funchal

@@ -266,6 +266,10 @@ ${NAV}
       <time datetime="${post.meta.data}">${dataBR(post.meta.data)}</time>
       ${post.meta.revisadoPor ? `<span>·</span><span>Revisado por ${escapar(post.meta.revisadoPor)}</span>` : ''}
     </p>
+    <figure class="post-featured">
+      <img src="${escapar(post.meta.imagem)}" alt="${escapar(post.meta.imagemAlt || post.meta.titulo)}" width="1200" height="675" fetchpriority="high" decoding="async">
+      <figcaption>Imagem de destaque da matéria.</figcaption>
+    </figure>
     <div class="post-body">
 ${markdown(post.corpo)}
     </div>

@@ -347,6 +347,9 @@ footer a:hover{color:var(--amber)}
   color:var(--muted);display:flex;gap:9px;flex-wrap:wrap;
   padding-bottom:30px;margin-bottom:38px;border-bottom:1px solid var(--line);
 }
+.post-featured{margin:0 0 42px}
+.post-featured img{display:block;width:100%;height:auto;max-height:520px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;background:var(--white)}
+.post-featured figcaption{margin-top:8px;color:var(--muted);font-family:var(--mono);font-size:.68rem;letter-spacing:.04em}
 .post-body{font-size:1.08rem;line-height:1.75}
 .post-body h2{
   font-size:clamp(1.42rem,2.6vw,1.86rem);margin:48px 0 16px;
