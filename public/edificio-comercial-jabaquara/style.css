@@ -46,3 +46,25 @@
  .hero-bottom>span+span{padding-left:0;border-left:0}
  .ownership{padding-top:60px;gap:30px}.ownership-image{max-width:380px}.ownership-image img{aspect-ratio:2/3}
 }
+
+/* Mix de três ambientes reais, com texto em área própria. */
+.hero{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);padding:0;isolation:auto}
+.hero-copy{grid-area:auto;min-height:0;padding:56px 40px 48px var(--pad);width:auto;background:var(--ink)}
+.hero h1{font-size:clamp(44px,4.6vw,74px);line-height:1.06;max-width:600px}
+.hero h1 span{font-size:.77em;line-height:1.15;margin-top:12px}
+.hero h2{font-size:18px;margin-top:26px}
+.hero-copy>p{font-size:15px;max-width:390px}
+.hero .eyebrow{font-size:11px}
+.hero-visual.hero-mosaic{grid-area:auto;position:relative;inset:auto;z-index:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1.5fr 1fr;gap:8px;background:var(--ink);height:auto;min-height:650px;max-height:none;opacity:1;aspect-ratio:auto;margin:24px 24px 24px 0;overflow:hidden}
+.hero-mosaic:after{display:none}
+.hero-frame{position:relative;min-width:0;min-height:0;overflow:hidden;display:block}
+.hero-frame-main{grid-column:1/-1}
+.hero-frame picture{position:absolute;inset:0}
+.hero-frame img{width:100%;height:100%;object-fit:cover;object-position:center}
+.hero-frame:after{content:'';position:absolute;inset:55% 0 0;background:linear-gradient(transparent,#111a);pointer-events:none}
+.hero-frame>span{position:absolute;left:20px;bottom:18px;right:12px;color:white;z-index:1;font-size:13px;line-height:1.5}
+.hero-frame:focus-visible{outline-offset:-5px}
+.hero-bottom{grid-area:auto;grid-column:1/-1}
+@media(min-width:1600px){.hero-copy{min-height:0}.hero-visual.hero-mosaic{min-height:730px}}
+@media(max-width:1000px) and (min-width:701px){.hero{grid-template-columns:1fr 1fr}.hero-copy{padding:42px 26px}.hero h1{font-size:46px}.hero-visual.hero-mosaic{margin:16px 16px 16px 0;min-height:640px}.hero-price{gap:12px}.hero-price>span{padding-left:12px;font-size:10px}.hero-frame>span{left:12px;font-size:12px}}
+@media(max-width:700px){.hero{display:flex;flex-direction:column}.hero-copy{padding:36px 24px 30px}.hero h1{font-size:clamp(37px,9.5vw,64px)}.hero .eyebrow{font-size:10px}.hero-copy>p{font-size:14px}.hero h2{font-size:17px}.hero-visual.hero-mosaic{margin:0 12px 12px;min-height:0;grid-template-rows:auto auto;gap:6px;width:auto}.hero-frame-main{aspect-ratio:3/2}.hero-frame:not(.hero-frame-main){aspect-ratio:4/3}.hero-frame>span{left:12px;bottom:10px;font-size:12px}.hero-bottom{display:grid}.hero-price>span{font-size:10px}}
