@@ -1,0 +1,181 @@
+{
+  "source_folder": "https://drive.google.com/drive/folders/1I5UYmIKj5gnW_JYpkP1zkTQRJmpvydcw",
+  "photos": [
+    {
+      "asset_prefix": "imovel-0",
+      "category": "Fachada",
+      "alt": "Fachada completa do prédio na Avenida Jabaquara",
+      "source_name": "Av Jabaquara 1907 (91 de 00091).jpg",
+      "source_url": "https://drive.google.com/file/d/1aEL35c_WCmWDIbjV0oZvAlDL8sPeVSBi/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-1",
+      "category": "Fachada",
+      "alt": "Vista frontal dos pavimentos e da entrada",
+      "source_name": "Av Jabaquara 1907 (90 de 00090).jpg",
+      "source_url": "https://drive.google.com/file/d/1rM-3adxVdx4B3bfA4W3Ewm7WBuEINRQI/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-77",
+      "category": "Acessos",
+      "alt": "Entrada envidraçada e área de recepção",
+      "source_name": "Av Jabaquara 1907 (14 de 00014).jpg",
+      "source_url": "https://drive.google.com/file/d/1yhY2K6yPnTu_lI9jvuVeTRKHVAuKj7M9/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-6",
+      "category": "Acessos",
+      "alt": "Acesso lateral e área externa",
+      "source_name": "Av Jabaquara 1907 (86 de 00086).jpg",
+      "source_url": "https://drive.google.com/file/d/1OSaASDQkaD4gdfxFS7X8mcs9VyXuJZGg/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-7",
+      "category": "Pavimentos",
+      "alt": "Área interna com circulação entre os ambientes",
+      "source_name": "Av Jabaquara 1907 (84 de 00084).jpg",
+      "source_url": "https://drive.google.com/file/d/1ZbMQ-9X0nJJq3ZIk5694Qykcn7CICRFF/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-36",
+      "category": "Pavimentos",
+      "alt": "Pavimento com janelas amplas e piso claro",
+      "source_name": "Av Jabaquara 1907 (55 de 00055).jpg",
+      "source_url": "https://drive.google.com/file/d/12MKhfoK1AMAUH6Bl_c1lNj475-9UWhuH/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-43",
+      "category": "Pavimentos",
+      "alt": "Vista de uma das áreas internas do edifício",
+      "source_name": "Av Jabaquara 1907 (48 de 00048).jpg",
+      "source_url": "https://drive.google.com/file/d/1KIgaSpLsPsQP5k0LQ56KItzdbO1eAgIG/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-49",
+      "category": "Pavimentos",
+      "alt": "Ambiente interno com janelas em duas faces",
+      "source_name": "Av Jabaquara 1907 (42 de 00042).jpg",
+      "source_url": "https://drive.google.com/file/d/1WpxBf6RW1U3SrIZOv4qOjVBFH33__ayx/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-62",
+      "category": "Pavimentos",
+      "alt": "Área de pavimento com aberturas laterais",
+      "source_name": "Av Jabaquara 1907 (29 de 00029).jpg",
+      "source_url": "https://drive.google.com/file/d/1KN-1ISYu8Xluvq24z7uZV6XRI9h0oLxf/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-72",
+      "category": "Pavimentos",
+      "alt": "Espaço interno e escada de circulação",
+      "source_name": "Av Jabaquara 1907 (19 de 00019).jpg",
+      "source_url": "https://drive.google.com/file/d/1XDj3fVPY0BOjl_yLFdCZ4JGqpSpnClze/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-31",
+      "category": "Áreas internas",
+      "alt": "Ambiente interno com escada e janela",
+      "source_name": "Av Jabaquara 1907 (60 de 00060).jpg",
+      "source_url": "https://drive.google.com/file/d/1cpOcLYyiHYsfadcAmSzBLobX-98apcAr/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-24",
+      "category": "Áreas internas",
+      "alt": "Área interna com guarda-corpo e circulação",
+      "source_name": "Av Jabaquara 1907 (67 de 00067).jpg",
+      "source_url": "https://drive.google.com/file/d/15-dSlv0Up-__afUo_wzFYkNSXkiBnTzO/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-51",
+      "category": "Áreas internas",
+      "alt": "Circulação junto ao elevador",
+      "source_name": "Av Jabaquara 1907 (40 de 00040).jpg",
+      "source_url": "https://drive.google.com/file/d/10jdJUALOpfAc2VYwZ2ZzQl2Asl1NWMNA/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-58",
+      "category": "Vistas e detalhes",
+      "alt": "Área externa lateral do prédio",
+      "source_name": "Av Jabaquara 1907 (33 de 00033).jpg",
+      "source_url": "https://drive.google.com/file/d/1KEnJRMx0DEJglFhIDnS8EZ9ibuzYMORH/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-15",
+      "category": "Vistas e detalhes",
+      "alt": "Vista da Avenida Jabaquara a partir do imóvel",
+      "source_name": "Av Jabaquara 1907 (76 de 00076).jpg",
+      "source_url": "https://drive.google.com/file/d/19pOH8Y622IUUbpcgpO8QqvD1yZGgBgDG/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-82",
+      "category": "Garagem",
+      "alt": "Rampa de acesso à garagem",
+      "source_name": "Av Jabaquara 1907 (08 de 00008).jpg",
+      "source_url": "https://drive.google.com/file/d/1-7DPQzPDE8V1HyRm6iv9bD5fY_RQZnVc/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-86",
+      "category": "Garagem",
+      "alt": "Área interna da garagem com demarcação de vagas",
+      "source_name": "Av Jabaquara 1907 (05 de 00005).jpg",
+      "source_url": "https://drive.google.com/file/d/1mE5WuSf7S4iay8Xa_q_DTWsGWSgdC1pl/view?usp=drivesdk"
+    },
+    {
+      "asset_prefix": "imovel-88",
+      "category": "Garagem",
+      "alt": "Circulação da garagem junto ao elevador",
+      "source_name": "Av Jabaquara 1907 (01 de 00001).jpg",
+      "source_url": "https://drive.google.com/file/d/1fisG-jBJadtzj5QrNsL9x1fxY9uKxm8H/view?usp=drivesdk"
+    }
+  ],
+  "tour": [
+    {
+      "type": "photo",
+      "source_name": "Av Jabaquara 1907 (91 de 00091).jpg",
+      "source_start_seconds": 0,
+      "duration_seconds": 3
+    },
+    {
+      "type": "video",
+      "source_name": "20260919_120259.mp4",
+      "source_start_seconds": 0.1,
+      "duration_seconds": 4.5
+    },
+    {
+      "type": "video",
+      "source_name": "20260919_115826.mp4",
+      "source_start_seconds": 10,
+      "duration_seconds": 4
+    },
+    {
+      "type": "video",
+      "source_name": "20260919_112153.mp4",
+      "source_start_seconds": 1,
+      "duration_seconds": 4
+    },
+    {
+      "type": "video",
+      "source_name": "20260919_114352.mp4",
+      "source_start_seconds": 0.3,
+      "duration_seconds": 3.5
+    },
+    {
+      "type": "video",
+      "source_name": "20260919_114230.mp4",
+      "source_start_seconds": 1,
+      "duration_seconds": 4
+    },
+    {
+      "type": "photo",
+      "source_name": "Av Jabaquara 1907 (05 de 00005).jpg",
+      "source_start_seconds": 0,
+      "duration_seconds": 3.5
+    },
+    {
+      "type": "video",
+      "source_name": "20260919_113719.mp4",
+      "source_start_seconds": 1,
+      "duration_seconds": 3.5
+    }
+  ]
+}
