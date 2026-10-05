@@ -1,3 +1,33 @@
+// Progressive enhancement: photographs remain in HTML and visible without JS.
+(() => {
+  const collage = document.querySelector('.hero-collage');
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  if (!collage || motion.matches || !Element.prototype.animate) return;
+  let animations = [];
+  let played = false;
+  const reveal = () => {
+    if (played || motion.matches) return;
+    played = true;
+    animations = [...collage.querySelectorAll('.hero-frame')].map((frame, index) => {
+      const rotation = getComputedStyle(frame).transform;
+      // Keep the principal image opaque for immediate rendering; animate only transforms.
+      const from = { transform: `${rotation} translateY(28px) scale(.97)`, opacity: index ? 0 : 1 };
+      return frame.animate([from, { transform: rotation, opacity: 1 }], {
+        duration: 650, delay: index * 150, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'backwards'
+      });
+    });
+  };
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting)) { observer.disconnect(); reveal(); }
+    }, { threshold: .12 });
+    observer.observe(collage);
+  } else reveal();
+  motion.addEventListener('change', event => {
+    if (event.matches) animations.forEach(animation => animation.cancel());
+  });
+})();
+
 (() => {
   'use strict';
   const $ = (s, root = document) => root.querySelector(s);
