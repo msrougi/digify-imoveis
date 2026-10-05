@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1920" viewBox="0 0 1280 1920">
+<defs>
+  <filter id="feather" x="-15%" y="-15%" width="130%" height="130%"><feGaussianBlur stdDeviation="20"/></filter>
+  <mask id="surroundings" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="1920" style="mask-type:luminance">
+    <rect width="1280" height="1920" fill="white"/>
+    <path d="M 535 450 L 805 285 L 870 455 L 1070 378 L 1118 1505 L 1200 1510 L 1200 1730 L 805 1700 L 258 1650 L 258 1480 L 530 1488 Z" fill="black" filter="url(#feather)"/>
+  </mask>
+</defs>
+<rect width="1280" height="1920" fill="white" mask="url(#surroundings)"/>
+</svg>

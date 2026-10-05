@@ -10,10 +10,10 @@
 @media(min-width:701px){.hero-visual{min-height:730px;background:var(--ink)}.hero-photo{position:absolute;inset:0}.hero-photo img{width:100%;height:100%;object-fit:cover;object-position:center 45%}.hero-copy{min-height:730px}}
 @media(min-width:1600px){.hero-visual,.hero-copy{min-height:840px}}
 
-/* Foco seletivo: fachada nítida, vizinhança suavizada apenas na abertura desktop. */
+/* Máscara acompanha a fotografia: desfoque de todo o entorno, fachada preservada. */
 @media(min-width:701px){
-  .hero-photo::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(25,27,24,.3) 0%,rgba(25,27,24,.13) 25%,transparent 43%,transparent 87%,rgba(25,27,24,.17) 100%)}
-  @supports ((backdrop-filter:blur(4px)) or (-webkit-backdrop-filter:blur(4px))){
-    .hero-photo::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;-webkit-backdrop-filter:blur(4px) saturate(.65);backdrop-filter:blur(4px) saturate(.65);-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 24%,transparent 43%,transparent 87%,#000 98%);mask-image:linear-gradient(90deg,#000 0%,#000 24%,transparent 43%,transparent 87%,#000 98%)}
+  .hero-photo::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:rgba(25,27,24,.2);-webkit-mask:url(assets/icons/hero-focus-mask.svg) center 45% / cover no-repeat;mask:url(assets/icons/hero-focus-mask.svg) center 45% / cover no-repeat}
+  @supports ((backdrop-filter:blur(11px)) or (-webkit-backdrop-filter:blur(11px))){
+    .hero-photo::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;-webkit-backdrop-filter:blur(11px) saturate(.48);backdrop-filter:blur(11px) saturate(.48);-webkit-mask:url(assets/icons/hero-focus-mask.svg) center 45% / cover no-repeat;mask:url(assets/icons/hero-focus-mask.svg) center 45% / cover no-repeat}
   }
 }
