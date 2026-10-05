@@ -10,10 +10,10 @@
     played = true;
     animations = [...collage.querySelectorAll('.hero-frame')].map((frame, index) => {
       const rotation = getComputedStyle(frame).transform;
-      // Keep the principal image opaque for immediate rendering; animate only transforms.
-      const from = { transform: `${rotation} translateY(28px) scale(.97)`, opacity: index ? 0 : 1 };
-      return frame.animate([from, { transform: rotation, opacity: 1 }], {
-        duration: 650, delay: index * 150, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'backwards'
+      // All photos stay opaque. A brief settling motion never simulates loading.
+      const from = { transform: `${rotation} translateY(12px) rotate(${index === 1 ? -1.5 : 1.5}deg) scale(.99)` };
+      return frame.animate([from, { transform: rotation }], {
+        duration: 380, delay: index * 45, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards'
       });
     });
   };
