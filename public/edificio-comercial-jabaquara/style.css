@@ -10,8 +10,7 @@
 @media(min-width:701px){.hero-visual{min-height:730px;background:var(--ink)}.hero-photo{position:absolute;inset:0}.hero-photo img{width:100%;height:100%;object-fit:cover;object-position:center 45%}.hero-copy{min-height:730px}}
 @media(min-width:1600px){.hero-visual,.hero-copy{min-height:840px}}
 
-/* Enquadramento natural da fachada, com sombreamento suave do entorno. */
+/* Vista frontal real: enquadramento natural e fachada sem efeitos seletivos. */
 @media(min-width:701px){
-  .hero-photo img{object-position:57% 42%;transform:scale(1.08);transform-origin:65% 45%}
-  .hero-photo::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(20,23,20,.28),rgba(20,23,20,.04) 45%,rgba(20,23,20,.12)),linear-gradient(0deg,rgba(20,23,20,.18),transparent 38%)}
+  .hero-photo img{object-position:62% 46%;transform:none}
 }
