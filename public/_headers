@@ -18,14 +18,14 @@
   Cache-Control: private, no-store
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
 
-/jabaquara/assets/*
+/edificio-comercial-jabaquara/assets/*
   Cache-Control: public, max-age=86400
 
-/jabaquara/
+/edificio-comercial-jabaquara/
   Cache-Control: public, max-age=0, must-revalidate
 
-/jabaquara/*.js
+/edificio-comercial-jabaquara/*.js
   Cache-Control: public, max-age=0, must-revalidate
 
-/jabaquara/*.css
+/edificio-comercial-jabaquara/*.css
   Cache-Control: public, max-age=0, must-revalidate

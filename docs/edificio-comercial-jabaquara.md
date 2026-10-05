@@ -1,8 +1,8 @@
 # Jabaquara 1907
 
-Página: https://imoveis.digify.live/jabaquara/
+Página: https://imoveis.digify.live/edificio-comercial-jabaquara/
 
-Origem estática: `public/jabaquara/`. O build existente copia os arquivos para `dist/jabaquara/`. Sitemap e redirecionamento sem barra final estão integrados ao projeto.
+Origem estática: `public/edificio-comercial-jabaquara/`. O build existente copia os arquivos para `dist/edificio-comercial-jabaquara/`. Sitemap e redirecionamento sem barra final estão integrados ao projeto.
 
 Atendimento: WhatsApp +55 11 98991-1000, mesmo canal já usado pela Digify. O formulário prepara uma mensagem e o visitante conclui o envio no WhatsApp; não confirma automaticamente agendamento ou entrega. Não há armazenamento de leads no servidor nesta página. UTMs acompanham a mensagem.
 

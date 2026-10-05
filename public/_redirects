@@ -6,4 +6,7 @@
 /coliseu-funchal  /coliseu-funchal/  301
 /blog  /blog/  301
 
-/jabaquara  /jabaquara/  301
+/jabaquara  /edificio-comercial-jabaquara/  301
+/jabaquara/  /edificio-comercial-jabaquara/  301
+/jabaquara/*  /edificio-comercial-jabaquara/:splat  301
+/edificio-comercial-jabaquara  /edificio-comercial-jabaquara/  301
