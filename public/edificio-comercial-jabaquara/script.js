@@ -1,31 +1,13 @@
-// Progressive enhancement: photographs remain in HTML and visible without JS.
 (() => {
-  const collage = document.querySelector('.hero-collage');
-  const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  if (!collage || motion.matches || !Element.prototype.animate) return;
-  let animations = [];
-  let played = false;
-  const reveal = () => {
-    if (played || motion.matches) return;
-    played = true;
-    animations = [...collage.querySelectorAll('.hero-frame')].map((frame, index) => {
-      const rotation = getComputedStyle(frame).transform;
-      // All photos stay opaque. A brief settling motion never simulates loading.
-      const from = { transform: `${rotation} translateY(12px) rotate(${index === 1 ? -1.5 : 1.5}deg) scale(.99)` };
-      return frame.animate([from, { transform: rotation }], {
-        duration: 380, delay: index * 45, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards'
-      });
-    });
-  };
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(entries => {
-      if (entries.some(entry => entry.isIntersecting)) { observer.disconnect(); reveal(); }
-    }, { threshold: .12 });
-    observer.observe(collage);
-  } else reveal();
-  motion.addEventListener('change', event => {
-    if (event.matches) animations.forEach(animation => animation.cancel());
-  });
+  const slider=document.querySelector('.hero-slider');if(!slider)return;
+  const slides=[...slider.querySelectorAll('.hero-slide')],dots=[...slider.querySelectorAll('[data-hero-slide]')];let current=0;
+  function show(index){current=(index+slides.length)%slides.length;slides.forEach((slide,i)=>{slide.classList.toggle('is-active',i===current);slide.setAttribute('aria-hidden',String(i!==current));dots[i].setAttribute('aria-pressed',String(i===current));});slider.querySelector('.hero-slide-count').textContent=String(current+1).padStart(2,'0')+' / 03';}
+  dots.forEach((dot,i)=>dot.addEventListener('click',()=>show(i)));
+  slider.querySelector('[data-hero-prev]').addEventListener('click',()=>show(current-1));
+  slider.querySelector('[data-hero-next]').addEventListener('click',()=>show(current+1));
+  slider.addEventListener('keydown',event=>{if(event.key==='ArrowRight'||event.key==='ArrowLeft'){event.preventDefault();show(current+(event.key==='ArrowRight'?1:-1));}});
+  let touchX=null;slider.addEventListener('touchstart',event=>{touchX=event.touches[0].clientX;},{passive:true});slider.addEventListener('touchend',event=>{if(touchX!==null){const delta=event.changedTouches[0].clientX-touchX;if(Math.abs(delta)>50)show(current+(delta<0?1:-1));touchX=null;}},{passive:true});
+  slider.querySelector('.hero-slider-controls').hidden=false;
 })();
 
 (() => {

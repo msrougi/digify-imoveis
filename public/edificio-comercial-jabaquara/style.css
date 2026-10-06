@@ -98,3 +98,16 @@ footer,.sticky-mobile{background:#102b28}
 @media(min-width:1600px){.hero-facade{width:23%;left:38%;top:160px}.hero-collage .hero-frame-entry{top:490px}.hero-collage .hero-frame-detail{top:350px}}
 @media(min-width:701px) and (max-width:1050px){.hero-facade{width:31%;left:34%;top:195px}.hero-collage .hero-frame-main{top:155px}.hero-collage .hero-frame-entry{top:440px}.hero-collage .hero-frame-detail{top:340px}}
 @media(max-width:700px){.hero .hero-collage,.hero .hero-bottom{display:none}.hero .hero-copy{min-height:0;padding-bottom:32px}.hero .hero-price{margin-bottom:0}}
+
+/* Slider da abertura: fotografia ampla e controles discretos. */
+.hero-slider{grid-area:1/2;align-self:center;min-width:0;margin:48px var(--pad) 48px 12px;padding:8px;background:#f5f1e8;border-radius:18px;box-shadow:0 30px 65px -20px #0008;color:#173f3a;overflow:hidden}
+.hero-slider-stage{position:relative;aspect-ratio:4/3;border-radius:11px;overflow:hidden;background:#d9dbd2;touch-action:pan-y}
+.hero-slide{position:absolute;inset:0;margin:0;opacity:0;visibility:hidden;transition:opacity .4s ease,visibility .4s;pointer-events:none}
+.hero-slide.is-active{opacity:1;visibility:visible;pointer-events:auto}
+.hero-slide picture,.hero-slide img{width:100%;height:100%;object-fit:cover;object-position:center}
+.hero-slider-controls{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 14px 10px}
+.hero-slide-count{font-size:12px;letter-spacing:.12em;font-variant-numeric:tabular-nums}
+.hero-slide-dots{display:flex;gap:4px}.hero-slide-dots button{width:32px;height:36px;padding:0;background:none;position:relative}.hero-slide-dots button:after{content:'';display:block;width:8px;height:8px;margin:auto;border-radius:8px;background:#a4b0a7;transition:width .25s,background .25s}.hero-slide-dots button[aria-pressed=true]:after{width:25px;background:#a75138}
+.hero-slide-arrows{display:flex;gap:8px}.hero-slide-arrows button{width:42px;height:42px;border:1px solid #bfc8bf;border-radius:50%;background:transparent;color:#173f3a;font-size:22px}.hero-slide-arrows button:hover{background:#173f3a;color:white;border-color:#173f3a}
+@media(min-width:701px) and (max-width:1050px){.hero-slider{margin-left:0;margin-right:24px}.hero-slider-controls{padding:12px 4px 6px;gap:8px}}
+@media(max-width:700px){.hero-slider{display:none}}
