@@ -90,11 +90,11 @@ footer,.sticky-mobile{background:#102b28}
 @media(max-width:700px){.final-copy{background:linear-gradient(90deg,#102f2be8,#173f3ab3)}.hero-bottom{background:#0d292580}}
 
 /* Contorno da foto original: nenhum detalhe arquitetônico reconstruído. */
-.hero-facade{position:absolute;z-index:4;top:8px;left:9%;width:83%;pointer-events:none;filter:drop-shadow(0 18px 18px #0008)}
-.hero-facade picture{display:block}.hero-facade img{width:100%;height:auto;clip-path:polygon(43.2% 12.2%,67.8% 12.2%,67.8% 22.8%,80.5% 22.8%,81.1% 78.5%,86.4% 78.5%,86.4% 89%,19.8% 89%,19.8% 79.5%,32% 79.5%,32% 70%,41.8% 70%)}
+.hero-facade{position:absolute;z-index:4;top:150px;left:28%;width:43%;padding:5px;background:#eeeee8;box-shadow:0 28px 55px -12px #0009,0 8px 20px #0005;transform:rotate(2deg)}
+.hero-facade picture{display:block;aspect-ratio:1/2.2;overflow:hidden}.hero-facade img{width:100%;height:100%;object-fit:cover;object-position:65% 50%}
 .hero-collage .hero-frame-main{width:64%;top:115px;left:-8%;transform:rotate(-8deg);z-index:1}
 .hero-collage .hero-frame-entry{width:48%;left:-7%;top:430px;transform:rotate(-10deg);z-index:2}
 .hero-collage .hero-frame-detail{width:54%;right:-8%;top:305px;transform:rotate(9deg);z-index:3}
-@media(min-width:1600px){.hero-facade{width:75%;left:13%}.hero-collage .hero-frame-entry{top:490px}.hero-collage .hero-frame-detail{top:350px}}
-@media(min-width:701px) and (max-width:1050px){.hero-facade{width:100%;left:0;top:90px}.hero-collage .hero-frame-main{top:155px}.hero-collage .hero-frame-entry{top:440px}.hero-collage .hero-frame-detail{top:340px}}
-@media(max-width:700px){.hero-collage{aspect-ratio:1/1.25;margin-bottom:20px}.hero-facade{top:-6%;left:3%;width:95%}.hero-collage .hero-frame-main{width:64%;left:-3%;top:13%}.hero-collage .hero-frame-entry{width:47%;left:-2%;top:62%}.hero-collage .hero-frame-detail{width:51%;right:-3%;top:42%}}
+@media(min-width:1600px){.hero-facade{width:36%;left:31%;top:160px}.hero-collage .hero-frame-entry{top:490px}.hero-collage .hero-frame-detail{top:350px}}
+@media(min-width:701px) and (max-width:1050px){.hero-facade{width:51%;left:23%;top:195px}.hero-collage .hero-frame-main{top:155px}.hero-collage .hero-frame-entry{top:440px}.hero-collage .hero-frame-detail{top:340px}}
+@media(max-width:700px){.hero-collage{aspect-ratio:1/1.25;margin-bottom:20px}.hero-facade{top:20%;left:27%;width:43%;padding:4px}.hero-collage .hero-frame-main{width:64%;left:-3%;top:13%}.hero-collage .hero-frame-entry{width:47%;left:-2%;top:62%}.hero-collage .hero-frame-detail{width:51%;right:-3%;top:42%}}
