@@ -17,6 +17,10 @@
   ],
   "services": [
     {
+      "binding": "JABAQUARA_LEADS",
+      "service": "digify-jabaquara-leads"
+    },
+    {
       "binding": "MONTASITE_EMAIL_WORKER",
       "service": "digify-montasite-email"
     },

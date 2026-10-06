@@ -1,7 +1,7 @@
 /* Atendimento e analytics existentes na Digify Imóveis. */
 window.SITE_CONFIG = {
   "whatsapp": "5511989911000",
-  "leadEndpoint": "",
+  "leadEndpoint": "https://imoveis.digify.live/api/jabaquara-lead",
   "publicUrl": "https://imoveis.digify.live/edificio-comercial-jabaquara/",
   "analytics": {
     "gtmId": "",

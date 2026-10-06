@@ -131,10 +131,17 @@
     if(endpointReady){
       submit.disabled=true;status.textContent='Encaminhando sua solicitação…';
       try{
-        const r=await fetch(config.leadEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name.trim(),phone,email:email.trim(),company:company.trim(),operation,attribution,property:'jabaquara-1907'}),signal:AbortSignal.timeout(15000)});
+        const r=await fetch(config.leadEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name.trim(),phone,email:email.trim(),company:company.trim(),operation,website:values.website,property:'jabaquara-1907'}),signal:AbortSignal.timeout(15000)});
         if(!r.ok)throw Error('Falha no recebimento');
         const response=await r.json();if(response.success!==true)throw Error('Recebimento não confirmado');
-        status.textContent='Solicitação recebida. O atendimento entrará em contato para esclarecer suas dúvidas e combinar um horário. A visita ainda depende de confirmação.';
+        status.textContent='Formulário enviado para o e-mail do corretor. Deseja falar agora com ele pelo WhatsApp?';
+        $('#copy-request').hidden=true;
+        if(whatsappReady){
+          const actions=document.createElement('div');actions.className='lead-success-actions';
+          const link=document.createElement('a');link.href=whatsappUrl(requestText);link.target='_blank';link.rel='noopener';link.className='button';link.textContent='Falar pelo WhatsApp';
+          const dismiss=document.createElement('button');dismiss.type='button';dismiss.className='text-link';dismiss.textContent='Agora não';dismiss.addEventListener('click',()=>{status.textContent='Formulário enviado. O corretor entrará em contato.';status.focus();});
+          actions.append(link,dismiss);status.append(actions);
+        }
         converted=true;track('form_submit',{channel:'endpoint'});form.reset();
         if(consent==='granted'&&window.fbq)window.fbq('track','Lead');
         const a=config.analytics||{};
