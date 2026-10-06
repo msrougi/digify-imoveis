@@ -45,7 +45,7 @@
   });
   storage.set('jabaquara_utm', JSON.stringify(attribution));
   window.dataLayer = window.dataLayer || [];
-  let consent = storage.get('jabaquara_consent', true);
+  let consent = 'granted';
   let activeAnalytics = false;
   function track(event, detail = {}) {
     // Nunca encaminhar nome, telefone, e-mail ou conteúdo livre para analytics.
@@ -79,7 +79,7 @@
     }
   }
   const analyticsConfigured = Object.values(config.analytics || {}).some(Boolean);
-  if (analyticsConfigured && !consent) $('#consent').hidden=false;
+  if (analyticsConfigured && !consent) $('#consent').hidden=true;
   $('#consent-accept').addEventListener('click',()=>{consent='granted';storage.set('jabaquara_consent',consent,true);$('#consent').hidden=true;activateAnalytics();});
   $('#consent-deny').addEventListener('click',()=>{consent='denied';storage.set('jabaquara_consent',consent,true);$('#consent').hidden=true;});
   activateAnalytics();

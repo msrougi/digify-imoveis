@@ -139,3 +139,27 @@ footer,.sticky-mobile{background:#102b28}
  .hero-slide-arrows [data-hero-next]{right:-32px;width:32px}
  .hero-slide-dots{left:50%;bottom:0;transform:translateX(-50%)}
 }
+.tour .tour-still {
+  display: none;
+}
+
+.diagram-help {
+  display: none;
+}
+
+@media (min-width: 701px) {
+  .tour-stage {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, .65fr);
+    align-items: center;
+  }
+
+  .tour-still {
+    display: none;
+  }
+
+  .tour-player {
+    grid-column: 2;
+    width: 100%;
+    margin-left: auto;
+  }
+}
