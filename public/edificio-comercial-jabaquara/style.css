@@ -97,4 +97,4 @@ footer,.sticky-mobile{background:#102b28}
 .hero-collage .hero-frame-detail{width:54%;right:-8%;top:305px;transform:rotate(9deg);z-index:3}
 @media(min-width:1600px){.hero-facade{width:23%;left:38%;top:160px}.hero-collage .hero-frame-entry{top:490px}.hero-collage .hero-frame-detail{top:350px}}
 @media(min-width:701px) and (max-width:1050px){.hero-facade{width:31%;left:34%;top:195px}.hero-collage .hero-frame-main{top:155px}.hero-collage .hero-frame-entry{top:440px}.hero-collage .hero-frame-detail{top:340px}}
-@media(max-width:700px){.hero-collage{aspect-ratio:1/1.25;margin-bottom:20px}.hero-facade{top:20%;left:36%;width:28%;padding:4px}.hero-collage .hero-frame-main{width:64%;left:-3%;top:13%}.hero-collage .hero-frame-entry{width:47%;left:-2%;top:62%}.hero-collage .hero-frame-detail{width:51%;right:-3%;top:42%}}
+@media(max-width:700px){.hero .hero-collage,.hero .hero-bottom{display:none}.hero .hero-copy{min-height:0;padding-bottom:32px}.hero .hero-price{margin-bottom:0}}
