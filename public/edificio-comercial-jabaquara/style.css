@@ -64,3 +64,27 @@ footer .broker-name{font-size:16px;line-height:1.6}footer .broker-name span{font
  .hero-bottom>span+span{padding-left:0;border-left:0}
  .ownership{padding-top:60px;gap:30px}.ownership-image{max-width:380px}.ownership-image img{aspect-ratio:2/3}
 }
+
+/* Verde profundo, terracota e superfícies claras. */
+:root{--paper:#f5f1e8;--soft:#e8ddc9;--accent:#b9684e;--green:#173f3a;--terracotta:#b9684e;--terracotta-button:#a75138;--line:#d1c8b7}
+header{background:#12332f;border-bottom-color:#e8ddc926}
+.hero{background:radial-gradient(ellipse at 85% 28%,#b9684e30,transparent 55%),linear-gradient(120deg,#102b28 0%,#173f3a 65%,#28534a 100%)}
+.hero-bottom{background:#0d292580;border-top-color:#e8ddc92b}
+.hero .eyebrow,.agency-icon{color:#e8ddc9}.hero h1 span{color:#e5ba98}
+.dot,.progress{background:#b9684e}
+.button,.button.black,.hero-actions .button,.sticky-mobile>a{background:#a75138;color:#fff;border-color:#a75138}
+.button:hover,.button.black:hover,.hero-actions .button:hover,.sticky-mobile>a:hover{background:#8c402c;border-color:#8c402c;color:#fff}
+.button.outline{background:transparent;border-color:#e8ddc9;color:#f5f1e8}.button.outline:hover{background:#ffffff15}
+.ownership h2 em,.stat strong,.location h2,.operation-list h3{color:#173f3a}
+.ownership .clean-list li:before,.operation-list>div>span{color:#a75138}
+.location{background:#e8ddc9}.possibilities{background:#f5f1e8}
+.tour,.floors-section,.contact{background:#173f3a}
+.parking,.final-cta{background:#102f2b}
+.floor{background:#28534a}.floor:after{background:#102f2b}
+.floor[aria-pressed=true],.floor:hover{background:#e8ddc9;color:#173f3a}.floor[aria-pressed=true]:after{background:#b8a68b}
+.filters button[aria-pressed=true]{background:#173f3a;color:#fff;border-color:#173f3a}
+.price-section{background:#e8ddc9}.tax{border-color:#a75138;color:#173f3a}
+.special-label:hover{text-decoration:underline;text-underline-offset:4px}
+.whatsapp-floating{background:#a75138;border-color:#e8ddc980}.whatsapp-floating:hover{background:#8c402c}
+footer,.sticky-mobile{background:#102b28}
+@media(max-width:700px){.final-copy{background:linear-gradient(90deg,#102f2be8,#173f3ab3)}.hero-bottom{background:#0d292580}}
