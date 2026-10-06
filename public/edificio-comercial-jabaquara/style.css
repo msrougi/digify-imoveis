@@ -89,12 +89,12 @@ header{background:#12332f;border-bottom-color:#e8ddc926}
 footer,.sticky-mobile{background:#102b28}
 @media(max-width:700px){.final-copy{background:linear-gradient(90deg,#102f2be8,#173f3ab3)}.hero-bottom{background:#0d292580}}
 
-/* Contorno da foto original: nenhum detalhe arquitetônico reconstruído. */
-.hero-facade{position:absolute;z-index:4;top:150px;left:28%;width:43%;padding:5px;background:#eeeee8;box-shadow:0 28px 55px -12px #0009,0 8px 20px #0005;transform:rotate(2deg)}
-.hero-facade picture{display:block;aspect-ratio:1/2.2;overflow:hidden}.hero-facade img{width:100%;height:100%;object-fit:cover;object-position:65% 50%}
-.hero-collage .hero-frame-main{width:64%;top:115px;left:-8%;transform:rotate(-8deg);z-index:1}
-.hero-collage .hero-frame-entry{width:48%;left:-7%;top:430px;transform:rotate(-10deg);z-index:2}
-.hero-collage .hero-frame-detail{width:54%;right:-8%;top:305px;transform:rotate(9deg);z-index:3}
-@media(min-width:1600px){.hero-facade{width:36%;left:31%;top:160px}.hero-collage .hero-frame-entry{top:490px}.hero-collage .hero-frame-detail{top:350px}}
-@media(min-width:701px) and (max-width:1050px){.hero-facade{width:51%;left:23%;top:195px}.hero-collage .hero-frame-main{top:155px}.hero-collage .hero-frame-entry{top:440px}.hero-collage .hero-frame-detail{top:340px}}
-@media(max-width:700px){.hero-collage{aspect-ratio:1/1.25;margin-bottom:20px}.hero-facade{top:20%;left:27%;width:43%;padding:4px}.hero-collage .hero-frame-main{width:64%;left:-3%;top:13%}.hero-collage .hero-frame-entry{width:47%;left:-2%;top:62%}.hero-collage .hero-frame-detail{width:51%;right:-3%;top:42%}}
+/* Fotos menores e enquadramento vertical concentrado na fachada. */
+.hero-facade{position:absolute;z-index:4;top:155px;left:37%;width:26%;padding:5px;background:#eeeee8;box-shadow:0 28px 55px -12px #0009,0 8px 20px #0005;transform:rotate(2deg)}
+.hero-facade picture{display:block;aspect-ratio:1/3.4;overflow:hidden}.hero-facade img{width:100%;height:100%;object-fit:cover;object-position:72% 50%}
+.hero-collage .hero-frame-main{width:53%;top:130px;left:0;transform:rotate(-8deg);z-index:1}
+.hero-collage .hero-frame-entry{width:40%;left:1%;top:420px;transform:rotate(-10deg);z-index:2}
+.hero-collage .hero-frame-detail{width:45%;right:0;top:305px;transform:rotate(9deg);z-index:3}
+@media(min-width:1600px){.hero-facade{width:23%;left:38%;top:160px}.hero-collage .hero-frame-entry{top:470px}.hero-collage .hero-frame-detail{top:350px}}
+@media(min-width:701px) and (max-width:1050px){.hero-facade{width:31%;left:34%;top:195px}.hero-collage .hero-frame-main{top:165px}.hero-collage .hero-frame-entry{top:420px}.hero-collage .hero-frame-detail{top:340px}}
+@media(max-width:700px){.hero-collage{aspect-ratio:1/1.15;margin-bottom:20px}.hero-facade{top:20%;left:36%;width:28%;padding:4px}.hero-collage .hero-frame-main{width:53%;left:1%;top:13%}.hero-collage .hero-frame-entry{width:39%;left:2%;top:62%}.hero-collage .hero-frame-detail{width:42%;right:1%;top:42%}}
