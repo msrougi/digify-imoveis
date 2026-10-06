@@ -112,4 +112,5 @@ footer,.sticky-mobile{background:#102b28}
 .hero-slide-arrows svg{width:20px;height:20px;filter:drop-shadow(0 1px 2px #0005)}
 .hero-slider button:focus-visible{outline:2px solid white;outline-offset:2px}
 @media(min-width:701px) and (max-width:1050px){.hero-slider{margin-left:0;margin-right:24px}.hero-slider-controls{padding:12px}.hero-slide-dots{bottom:12px}.hero-slide-arrows{gap:5px}.hero-slide-count{font-size:10px}}
+@media(min-width:701px) and (max-width:1100px){.hero-slide-count{visibility:hidden}.hero-slide-dots{left:12px;transform:none}.hero-slide-dots button{width:22px}.hero-slide-arrows{gap:4px}}
 @media(max-width:700px){.hero-slider{display:none}}
