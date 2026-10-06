@@ -115,6 +115,8 @@ footer,.sticky-mobile{background:#102b28}
 @media(min-width:701px) and (max-width:1100px){.hero-slide-count{visibility:hidden}.hero-slide-dots{left:12px;transform:none}.hero-slide-dots button{width:22px}.hero-slide-arrows{gap:4px}}
 @media(max-width:700px){.hero-slider{display:none}}
 
+/* Centre visuel de la photo aligné au texte, hors rangée des contrôles. */
+@media(min-width:701px){.hero-slider{align-self:center;transform:translateY(24px)}}
 /* Courbe légère, navigation extérieure sans fond. */
 .hero-slider{margin-left:24px;margin-right:48px;border:0;border-radius:0;box-shadow:none;overflow:visible;padding-bottom:48px;filter:drop-shadow(0 20px 22px #0005) drop-shadow(0 4px 6px #0003)}
 .hero-slider-stage{clip-path:url(#hero-concave);background:transparent}
@@ -130,3 +132,10 @@ footer,.sticky-mobile{background:#102b28}
 .hero-slide-arrows .hero-slide-pause{top:auto;bottom:0;right:0;font-size:14px}
 .hero-slide-arrows svg{width:18px;height:18px;filter:none}
 @media(min-width:701px) and (max-width:1050px){.hero-slider{margin-left:30px;margin-right:42px}.hero-slide-arrows [data-hero-prev]{left:-36px}.hero-slide-arrows [data-hero-next]{right:-36px}}
+@media(max-width:700px){
+ .hero .hero-slider{display:block;align-self:center;width:calc(100% - 64px);margin:8px 32px 34px;padding-bottom:48px;transform:none}
+ .hero-slider-stage{aspect-ratio:4/3}
+ .hero-slide-arrows [data-hero-prev]{left:-32px;width:32px}
+ .hero-slide-arrows [data-hero-next]{right:-32px;width:32px}
+ .hero-slide-dots{left:50%;bottom:0;transform:translateX(-50%)}
+}
