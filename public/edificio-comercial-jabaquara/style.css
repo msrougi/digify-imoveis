@@ -236,3 +236,10 @@ footer,.sticky-mobile{background:#102b28}
     padding: 30px 15px;
   }
 }
+
+/* Espaço acima do vídeo no celular com garantia de prioridade */
+@media (max-width: 768px) {
+  .tour-col-video {
+    margin-top: 25px !important;
+  }
+}
