@@ -153,13 +153,22 @@ footer,.sticky-mobile{background:#102b28}
     align-items: center;
   }
 
+
+@media (min-width: 701px) {
+  .tour-stage {
+    display: grid;
+    grid-template-columns: 1.2fr .65fr;
+    gap: 25px;
+    align-items: center;
+  }
+
   .tour-still {
-    display: none;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .tour-player {
     grid-column: 2;
-    width: 100%;
-    margin-left: auto;
   }
 }
