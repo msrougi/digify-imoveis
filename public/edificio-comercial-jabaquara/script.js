@@ -8,6 +8,24 @@
   slider.addEventListener('keydown',event=>{if(event.key==='ArrowRight'||event.key==='ArrowLeft'){event.preventDefault();show(current+(event.key==='ArrowRight'?1:-1));}});
   let touchX=null;slider.addEventListener('touchstart',event=>{touchX=event.touches[0].clientX;},{passive:true});slider.addEventListener('touchend',event=>{if(touchX!==null){const delta=event.changedTouches[0].clientX-touchX;if(Math.abs(delta)>50)show(current+(delta<0?1:-1));touchX=null;}},{passive:true});
   slider.querySelector('.hero-slider-controls').hidden=false;
+  const motion=matchMedia('(prefers-reduced-motion: reduce)'),desktop=matchMedia('(min-width:701px)');
+  let timer=null,hovered=false,focused=false,inView=true,paused=false;
+  const pause=document.createElement('button');pause.type='button';pause.className='hero-slide-pause';pause.textContent='Ⅱ';
+  slider.querySelector('.hero-slide-arrows').prepend(pause);
+  const counter=slider.querySelector('.hero-slide-count');
+  function sync(){
+    clearInterval(timer);timer=null;
+    const running=!paused&&!motion.matches&&desktop.matches&&!document.hidden&&!hovered&&!focused&&inView;
+    counter.setAttribute('aria-live',running?'off':'polite');
+    pause.textContent=paused?'▷':'Ⅱ';pause.setAttribute('aria-label',paused?'Retomar troca automática':'Pausar troca automática');pause.setAttribute('aria-pressed',String(paused));
+    if(running)timer=setInterval(()=>show(current+1),3000);
+  }
+  pause.addEventListener('click',()=>{paused=!paused;sync();});
+  slider.addEventListener('mouseenter',()=>{hovered=true;sync();});slider.addEventListener('mouseleave',()=>{hovered=false;sync();});
+  slider.addEventListener('focusin',()=>{focused=true;sync();});slider.addEventListener('focusout',event=>{if(!slider.contains(event.relatedTarget)){focused=false;sync();}});
+  document.addEventListener('visibilitychange',sync);motion.addEventListener('change',sync);desktop.addEventListener('change',sync);
+  if('IntersectionObserver' in window){new IntersectionObserver(entries=>{inView=entries[0].isIntersecting;sync();},{threshold:.1}).observe(slider);}
+  sync();
 })();
 
 (() => {
