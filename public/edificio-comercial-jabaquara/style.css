@@ -164,8 +164,17 @@ footer,.sticky-mobile{background:#102b28}
 
   .tour-still {
     display: block;
-    opacity: 0;
-    pointer-events: none;
+    opacity: 1;
+    filter: none;
+    pointer-events: auto;
+    min-height: 520px;
+  }
+
+  .tour-still picture,
+  .tour-still img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .tour-player {
