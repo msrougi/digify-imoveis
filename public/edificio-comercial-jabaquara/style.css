@@ -156,28 +156,30 @@ footer,.sticky-mobile{background:#102b28}
 
 @media (min-width: 701px) {
   .tour-stage {
-    display: grid;
-    grid-template-columns: 1.2fr .65fr;
-    gap: 25px;
-    align-items: center;
+    display: grid !important;
+    grid-template-columns: 1.2fr .65fr !important;
+    gap: 25px !important;
+    align-items: center !important;
   }
 
-  .tour-still {
-    display: block;
-    opacity: 1;
-    filter: none;
-    pointer-events: auto;
-    min-height: 520px;
+  .tour-stage > .tour-still {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    filter: none !important;
+    min-height: 520px !important;
+    pointer-events: auto !important;
   }
 
-  .tour-still picture,
-  .tour-still img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .tour-stage > .tour-still picture,
+  .tour-stage > .tour-still img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
   }
 
-  .tour-player {
-    grid-column: 2;
+  .tour-stage > .tour-player {
+    grid-column: 2 !important;
   }
 }
