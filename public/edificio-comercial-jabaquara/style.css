@@ -11,9 +11,9 @@ header .wordmark{display:flex;align-items:center;gap:8px}
 .agency-name{display:flex;flex-direction:column;gap:5px;letter-spacing:.01em}
 .agency-name small{font-size:11px;font-weight:400;letter-spacing:.06em;color:#c9cbbf}
 footer .broker-name{font-size:16px;line-height:1.6}footer .broker-name span{font-size:14px}
-.special-price{display:inline-flex!important;flex-direction:column;gap:7px;vertical-align:middle;letter-spacing:normal!important}
-.special-price .special-label{font-size:12px!important;font-weight:600;letter-spacing:.12em!important;margin:0!important;color:inherit!important;line-height:1.5}
-.special-price .blurred-price{filter:blur(9px);user-select:none;pointer-events:none;font-size:30px!important;line-height:1.4;margin:0!important}
+.special-price{display:inline-grid!important;position:relative;isolation:isolate;place-items:center;min-width:190px;min-height:70px;vertical-align:middle;letter-spacing:normal!important}
+.special-price .special-label{grid-area:1/1;position:relative;z-index:2;display:block;font-size:12px!important;font-weight:600;letter-spacing:.08em!important;margin:0!important;color:inherit!important;line-height:1.6;text-align:center;white-space:normal;padding:8px 4px}
+.special-price .blurred-price{grid-area:1/1;position:relative;z-index:0;opacity:.4;filter:blur(9px);user-select:none;pointer-events:none;font-size:30px!important;line-height:1.4;margin:0!important}
 .rent .special-label{font-size:clamp(16px,3vw,28px)!important}.rent .blurred-price{font-size:clamp(65px,10vw,140px)!important;filter:blur(18px)}
 .whatsapp-floating{position:fixed;bottom:26px;right:26px;z-index:35;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#087c47;color:#fff;box-shadow:0 5px 22px #0004;border:1px solid #ffffff50}
 .whatsapp-floating:hover{background:#09663f}.whatsapp-floating svg{display:block}
