@@ -91,9 +91,13 @@ const probePdf = async item => {
   try {
     let response = await fetch(item.link, { method: "HEAD", redirect: "follow", signal: controller.signal });
     let contentType = response.headers.get("content-type") || "";
-    response = await fetch(item.link, { method: "GET", redirect: "follow", signal: controller.signal, headers: { Range: "bytes=0-15", Accept: "application/pdf" } });
+    response = await fetch(item.link, { method: "GET", redirect: "follow", signal: controller.signal, headers: { Range: "bytes=0-31", Accept: "application/pdf" } });
     contentType = response.headers.get("content-type") || contentType;
-    const signature = new TextDecoder().decode((await response.arrayBuffer()).slice(0, 5));
+    if (!response.body) return null;
+    const reader = response.body.getReader();
+    const first = await reader.read();
+    await reader.cancel().catch(() => {});
+    const signature = new TextDecoder().decode((first.value || new Uint8Array()).slice(0, 5));
     if (!response.ok || (!/application\/pdf/i.test(contentType) && signature !== "%PDF-")) return null;
     const finalUrl = safeHttpsUrl(response.url) || item.url;
     return { ...item, url: finalUrl, link: finalUrl.toString(), verifiedPdf: true };
