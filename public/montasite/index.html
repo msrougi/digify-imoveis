@@ -16,7 +16,8 @@
     <form id="site-form" class="shell app-grid">
       <div class="builder-stack">
         <section class="glass-card form-section">
-          <div class="section-heading"><span>01</span><div><p class="eyebrow">Descoberta</p><h2>Encontre o empreendimento.</h2><small>Escolha bairro, tipologia e fase. A busca aplicará os três critérios aos PDFs.</small></div></div>
+          <div class="section-heading"><span>01</span><div><p class="eyebrow">Descoberta</p><h2>Encontre o empreendimento.</h2><small>Escolha um achado recente ou pesquise por bairro, tipologia e fase.</small></div></div>
+          <div class="recent-pdfs"><div class="recent-pdfs-head"><div><p class="eyebrow"><i></i> MONITOR DIÁRIO</p><h3>20 PDFs mais recentes</h3><small id="recent-pdfs-status">Carregando o catálogo verificado…</small></div><button id="refresh-recent-pdfs" type="button">Atualizar ↻</button></div><div id="recent-pdf-list" class="recent-pdf-list" role="list" aria-live="polite"><p class="pdf-empty">Consultando novos lançamentos em São Paulo…</p></div></div>
           <div class="field-grid"><label class="field"><span>Bairro</span><input id="bairro" name="bairro" list="bairros" autocomplete="off" placeholder="Ex.: Moema" required><datalist id="bairros"></datalist></label><fieldset class="field"><legend>Tipologia</legend><div class="segmented three"><label><input type="radio" name="tipologia" value="Studio / 1 dormitório" checked><span>Studio / 1 dorm.</span></label><label><input type="radio" name="tipologia" value="2 dormitórios"><span>2 dorms.</span></label><label><input type="radio" name="tipologia" value="3 dormitórios ou mais"><span>3 dorms. ou +</span></label></div></fieldset></div>
           <fieldset class="field discovery-phase"><legend>Fase do imóvel</legend><div class="segmented two"><label><input type="radio" name="fase" value="Lançamento" checked><span>Lançamento / em obras</span></label><label><input type="radio" name="fase" value="Pronta entrega"><span>Pronta entrega</span></label></div></fieldset>
           <button id="search-pdfs" class="secondary-action" type="button"><span>Buscar PDFs compatíveis</span><b>⌁</b></button>
@@ -52,3 +53,4 @@
   <dialog id="google-dialog"><button class="dialog-close" aria-label="Fechar">×</button><p class="eyebrow">Integrações</p><h2>Google Ads + Search Console</h2><p>As credenciais ficam somente nos secrets do Cloudflare. Com a integração ativa, o MontaSite consulta volume, concorrência, impressões, cliques, CTR e posição antes de definir a estratégia.</p><div class="secret-list"><span>GOOGLE_CLIENT_ID</span><span>GOOGLE_CLIENT_SECRET</span><span>GOOGLE_REFRESH_TOKEN</span><span>GOOGLE_ADS_DEVELOPER_TOKEN</span><span>GOOGLE_ADS_CUSTOMER_ID</span><span>SEARCH_CONSOLE_SITE_URL</span></div><button class="primary-action dialog-action" type="button"><span>Entendi</span><b>✓</b></button></dialog>
   <script src="/montasite/assets/montasite.js"></script>
 </body></html>
+

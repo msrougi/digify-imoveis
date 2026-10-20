@@ -1,7 +1,7 @@
 import { json, requireSession } from "../_shared/montasite-auth.js";
 
-const MAX_RESULTS = 18;
-const MAX_PROBES = 24;
+const MAX_RESULTS = 24;
+const MAX_PROBES = 32;
 const GENERIC_PDF_HOSTS = /(?:^|\.)(?:workspace\.google\.com|smallpdf\.com|ilovepdf\.com|adobe\.com|canva\.com)$/i;
 
 const clean = (value, length = 180) => String(value || "").replace(/\s+/g, " ").trim().slice(0, length);
@@ -80,22 +80,21 @@ const candidateContext = (item, bairro, tipologia, fase) => {
 const isRelevantCandidate = (item, bairro, tipologia, fase) => {
   if (GENERIC_PDF_HOSTS.test(item.url.hostname)) return false;
   const context = candidateContext(item, bairro, tipologia, fase);
-  return context.hasBairro && context.hasRealEstate && context.hasType && context.hasPhase;
+  // Títulos e snippets dos buscadores raramente repetem toda a ficha do book.
+  // A tipologia e a fase são usadas para ordenar, mas só o PDF é a fonte final.
+  return context.hasBairro && (context.hasRealEstate || looksLikePdf(item));
 };
 
 const probePdf = async item => {
-  if (looksLikePdf(item)) return { ...item, verifiedPdf: true };
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 4500);
+  const timeout = setTimeout(() => controller.abort(), 8000);
   try {
     let response = await fetch(item.link, { method: "HEAD", redirect: "follow", signal: controller.signal });
     let contentType = response.headers.get("content-type") || "";
-    if (!response.ok || !/application\/pdf/i.test(contentType)) {
-      response = await fetch(item.link, { method: "GET", redirect: "follow", signal: controller.signal, headers: { Range: "bytes=0-7" } });
-      contentType = response.headers.get("content-type") || "";
-      const signature = new TextDecoder().decode((await response.arrayBuffer()).slice(0, 5));
-      if (!response.ok || (!/application\/pdf/i.test(contentType) && signature !== "%PDF-")) return null;
-    }
+    response = await fetch(item.link, { method: "GET", redirect: "follow", signal: controller.signal, headers: { Range: "bytes=0-15", Accept: "application/pdf" } });
+    contentType = response.headers.get("content-type") || contentType;
+    const signature = new TextDecoder().decode((await response.arrayBuffer()).slice(0, 5));
+    if (!response.ok || (!/application\/pdf/i.test(contentType) && signature !== "%PDF-")) return null;
     const finalUrl = safeHttpsUrl(response.url) || item.url;
     return { ...item, url: finalUrl, link: finalUrl.toString(), verifiedPdf: true };
   } catch {
@@ -134,20 +133,21 @@ const shapeItems = (items, bairro, tipologia, fase) => items
     const copy = `${item.title} ${item.snippet}`;
     const year = copy.match(/\b(202[7-9])\b/)?.[1];
     return {
-      id: `search-${index}-${item.url.hostname.replace(/[^a-z0-9]/gi, "-")}`,
+      id: item.id || `search-${index}-${item.url.hostname.replace(/[^a-z0-9]/gi, "-")}`,
       name: resultName(item.title),
       bairro,
       pdf: decodeURIComponent(item.url.pathname.split("/").pop() || `material-${index + 1}.pdf`).slice(0, 180),
       pdfUrl: item.link,
       sourceHost: item.url.hostname.replace(/^www\./, ""),
-      phase: fase,
-      delivery: year ? `previsão citada: ${year}` : fase === "Pronta entrega" ? "pronta entrega — confirmar no PDF" : "prazo a confirmar",
-      types: [tipologia],
-      heat: 50,
-      searches: "a medir",
-      competition: "a medir",
+      phase: item.phase || fase,
+      delivery: item.delivery || (year ? `previsão citada: ${year}` : fase === "Pronta entrega" ? "pronta entrega — confirmar no PDF" : "prazo a confirmar"),
+      types: item.types?.length ? item.types : [tipologia],
+      heat: item.heat ?? 50,
+      searches: item.searches || "a medir",
+      competition: item.competition || "a medir",
       verifiedPdf: true,
-      summary: item.snippet || `PDF localizado em ${item.url.hostname}. Os dados serão confirmados durante a leitura do material.`
+      firstSeenAt: item.firstSeenAt || null,
+      summary: item.summary || item.snippet || `PDF localizado em ${item.url.hostname}. Os dados serão confirmados durante a leitura do material.`
     };
   });
 
@@ -155,7 +155,7 @@ const fetchSerper = async (query, apiKey, queryIndex) => {
   const response = await fetch("https://google.serper.dev/search", {
     method: "POST",
     headers: { "X-API-KEY": apiKey, "content-type": "application/json" },
-    body: JSON.stringify({ q: query, gl: "br", hl: "pt-br", num: 10 })
+    body: JSON.stringify({ q: query, gl: "br", hl: "pt-br", num: 20 })
   });
   if (!response.ok) throw new Error(`Serper ${response.status}`);
   const data = await response.json();
@@ -204,10 +204,44 @@ const fetchBingRss = async (query, queryIndex) => {
 
 const collectSearchGroups = async tasks => {
   const settled = await Promise.allSettled(tasks);
-  const groups = settled.filter(result => result.status === "fulfilled").map(result => result.value);
+  const groups = settled.filter(result => result.status === "fulfilled" && result.value?.length).map(result => result.value);
   if (groups.length) return groups;
   const firstFailure = settled.find(result => result.status === "rejected");
   throw firstFailure?.reason instanceof Error ? firstFailure.reason : new Error("Nenhuma fonte de busca respondeu.");
+};
+
+const catalogMatches = async (env, bairro, tipologia, fase) => {
+  if (!env.MONTASITE_AUTH) return [];
+  const catalog = await env.MONTASITE_AUTH.get("pdf:catalog", "json").catch(() => []);
+  const bairroTerm = normalize(bairro);
+  return (Array.isArray(catalog) ? catalog : []).filter(item => {
+    const itemBairro = normalize(item.bairro);
+    const bairroMatches = itemBairro.includes(bairroTerm) || bairroTerm.includes(itemBairro);
+    const typeMatches = !item.types?.length || item.types.includes(tipologia);
+    const phaseMatches = !item.phase || item.phase === fase || item.phase === "A confirmar";
+    return item.verifiedPdf && bairroMatches && typeMatches && phaseMatches;
+  }).map(item => {
+    const url = safeHttpsUrl(item.pdfUrl);
+    if (!url) return null;
+    return { ...item, url, link: url.toString(), title: item.name, snippet: item.summary || "PDF já validado pelo monitor diário.", queryIndex: -1, verifiedPdf: true };
+  }).filter(Boolean);
+};
+
+const liveSearch = async (queries, env) => {
+  const providers = [];
+  if (env.SERPER_API_KEY) providers.push({ name: "serper", run: () => collectSearchGroups(queries.map((query, index) => fetchSerper(query, env.SERPER_API_KEY, index))) });
+  if (env.GOOGLE_SEARCH_API_KEY && env.GOOGLE_SEARCH_ENGINE_ID) providers.push({ name: "google-cse", run: () => collectSearchGroups(queries.slice(0, 4).map((query, index) => fetchGoogle(query, env, index))) });
+  providers.push({ name: "bing-rss", run: () => collectSearchGroups(queries.map((query, index) => fetchBingRss(query, index))) });
+  const failures = [];
+  for (const provider of providers) {
+    try {
+      const groups = await provider.run();
+      if (groups.flat().length) return { provider: provider.name, groups };
+    } catch (error) {
+      failures.push(`${provider.name}: ${error instanceof Error ? error.message : "falhou"}`);
+    }
+  }
+  return { provider: "catálogo", groups: [], failures };
 };
 
 export async function onRequestGet({ request, env }) {
@@ -221,18 +255,8 @@ export async function onRequestGet({ request, env }) {
 
   const queries = buildQueries(bairro, tipologia, fase);
   try {
-    let provider = "";
-    let groups = [];
-    if (env.SERPER_API_KEY) {
-      provider = "serper-multibusca";
-      groups = await collectSearchGroups(queries.map((query, index) => fetchSerper(query, env.SERPER_API_KEY, index)));
-    } else if (env.GOOGLE_SEARCH_API_KEY && env.GOOGLE_SEARCH_ENGINE_ID) {
-      provider = "google-cse-multibusca";
-      groups = await collectSearchGroups(queries.slice(0, 4).map((query, index) => fetchGoogle(query, env, index)));
-    } else {
-      provider = "busca-publica-multibusca";
-      groups = await collectSearchGroups(queries.map((query, index) => fetchBingRss(query, index)));
-    }
+    const stored = await catalogMatches(env, bairro, tipologia, fase);
+    const { provider, groups, failures = [] } = await liveSearch(queries, env);
 
     const unique = new Map();
     for (const item of groups.flat()) {
@@ -241,15 +265,21 @@ export async function onRequestGet({ request, env }) {
     }
     const candidates = [...unique.values()].filter(item => isRelevantCandidate(item, bairro, tipologia, fase)).slice(0, MAX_PROBES);
     const verified = (await Promise.all(candidates.map(probePdf))).filter(Boolean);
+    const merged = new Map(stored.map(item => [item.link.replace(/\/$/, "").toLowerCase(), item]));
+    for (const item of verified) if (!merged.has(item.link.replace(/\/$/, "").toLowerCase())) merged.set(item.link.replace(/\/$/, "").toLowerCase(), item);
     return json({
       ok: true,
       connected: true,
       provider,
       queriesRun: groups.length,
       candidatesChecked: candidates.length,
-      items: shapeItems(verified, bairro, tipologia, fase)
+      catalogMatches: stored.length,
+      liveMatches: verified.length,
+      providerWarnings: failures,
+      items: shapeItems([...merged.values()], bairro, tipologia, fase)
     });
   } catch (error) {
     return json({ ok: false, connected: true, error: error instanceof Error ? error.message : "Falha na busca.", items: [] }, 502);
   }
 }
+

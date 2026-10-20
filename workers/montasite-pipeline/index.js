@@ -435,6 +435,246 @@ async function runPipeline(env, input) {
     console.error("MontaSite pipeline failed", message);
   }
 }
+
+const SAO_PAULO_DISTRICTS = [
+  "Água Rasa", "Alto de Pinheiros", "Anhanguera", "Aricanduva", "Artur Alvim", "Barra Funda", "Bela Vista", "Belém",
+  "Bom Retiro", "Brás", "Brasilândia", "Butantã", "Cachoeirinha", "Cambuci", "Campo Belo", "Campo Grande", "Campo Limpo",
+  "Cangaíba", "Capão Redondo", "Carrão", "Casa Verde", "Cidade Ademar", "Cidade Dutra", "Cidade Líder", "Cidade Tiradentes",
+  "Consolação", "Cursino", "Ermelino Matarazzo", "Freguesia do Ó", "Grajaú", "Guaianases", "Iguatemi", "Ipiranga",
+  "Itaim Bibi", "Itaim Paulista", "Itaquera", "Jabaquara", "Jaçanã", "Jaguara", "Jaguaré", "Jaraguá", "Jardim Ângela",
+  "Jardim Helena", "Jardim Paulista", "Jardim São Luís", "José Bonifácio", "Lajeado", "Lapa", "Liberdade", "Limão",
+  "Mandaqui", "Marsilac", "Moema", "Mooca", "Morumbi", "Parelheiros", "Pari", "Parque do Carmo", "Pedreira", "Penha",
+  "Perdizes", "Perus", "Pinheiros", "Pirituba", "Ponte Rasa", "Raposo Tavares", "República", "Rio Pequeno", "Sacomã",
+  "Santa Cecília", "Santana", "Santo Amaro", "São Domingos", "São Lucas", "São Mateus", "São Miguel Paulista", "São Rafael",
+  "Sapopemba", "Saúde", "Sé", "Socorro", "Tatuapé", "Tremembé", "Tucuruvi", "Vila Andrade", "Vila Curuçá",
+  "Vila Formosa", "Vila Guilherme", "Vila Jacuí", "Vila Leopoldina", "Vila Maria", "Vila Mariana", "Vila Matilde",
+  "Vila Medeiros", "Vila Prudente", "Vila Sônia"
+];
+const DISTRICT_ALIASES = {
+  "Alto de Pinheiros": ["Vila Beatriz"],
+  "Barra Funda": ["Várzea da Barra Funda"],
+  "Bela Vista": ["Bixiga"],
+  "Belém": ["Belenzinho"],
+  "Butantã": ["Vila Butantã", "City Butantã"],
+  "Campo Belo": ["Brooklin Paulista"],
+  "Consolação": ["Higienópolis", "Pacaembu"],
+  "Ipiranga": ["Vila Monumento"],
+  "Itaim Bibi": ["Vila Olímpia", "Brooklin Novo", "Itaim"],
+  "Jabaquara": ["Vila Guarani", "Conceição"],
+  "Jardim Paulista": ["Jardins", "Cerqueira César"],
+  "Lapa": ["Alto da Lapa", "Vila Romana", "Lapa de Baixo"],
+  "Liberdade": ["Aclimação"],
+  "Moema": ["Indianópolis", "Planalto Paulista"],
+  "Morumbi": ["Real Parque", "Jardim Guedala"],
+  "Perdizes": ["Pompéia", "Sumaré"],
+  "Pinheiros": ["Vila Madalena", "Sumarezinho"],
+  "Sacomã": ["Vila das Mercês"],
+  "Santa Cecília": ["Higienópolis", "Campos Elíseos"],
+  "Santo Amaro": ["Chácara Santo Antônio", "Alto da Boa Vista", "Granja Julieta"],
+  "Santana": ["Jardim São Paulo"],
+  "Saúde": ["Mirandópolis", "Bosque da Saúde"],
+  "Tatuapé": ["Anália Franco", "Jardim Anália Franco"],
+  "Vila Andrade": ["Panamby"],
+  "Vila Leopoldina": ["Vila Hamburguesa"],
+  "Vila Mariana": ["Chácara Klabin", "Paraíso"],
+  "Vila Prudente": ["Jardim Avelino"],
+  "Vila Sônia": ["Jardim Colombo"]
+};
+const DISCOVERY_CATALOG_LIMIT = 300;
+const DISCOVERY_PROBE_LIMIT = 14;
+const normalizeSearch = value => text(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+function safePdfUrl(value) {
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    if (url.protocol !== "https:" || host === "localhost" || host === "::1" || /^(?:127\.|10\.|192\.168\.|169\.254\.|172\.(?:1[6-9]|2\d|3[01])\.)/.test(host)) return null;
+    url.hash = "";
+    for (const key of [...url.searchParams.keys()]) if (/^(?:utm_|gclid|fbclid)/i.test(key)) url.searchParams.delete(key);
+    return url;
+  } catch {
+    return null;
+  }
+}
+function discoveryQueries(district) {
+  const areas = [district, ...(DISTRICT_ALIASES[district] || [])];
+  const location = areas.length === 1 ? `"${district}"` : `(${areas.map(area => `"${area}"`).join(" OR ")})`;
+  return [
+    `filetype:pdf ${location} (lançamento OR "breve lançamento" OR "na planta" OR "em construção") (empreendimento OR residencial) "São Paulo"`,
+    `filetype:pdf ${location} (book OR "book digital" OR apresentação OR catálogo) (incorporadora OR construtora) imóvel`,
+    `filetype:pdf ${location} (studio OR "1 dormitório" OR "2 dormitórios" OR "3 dormitórios" OR "4 dormitórios" OR suítes) (planta OR lazer OR implantação)`
+  ];
+}
+function decodeDiscoveryXml(value) {
+  return text(String(value || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/<[^>]*>/g, " "));
+}
+function discoveryXmlValue(block, tag) {
+  return decodeDiscoveryXml(block.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`, "i"))?.[1] || "");
+}
+async function searchBingDiscovery(query, queryIndex) {
+  const url = new URL("https://www.bing.com/search");
+  url.searchParams.set("format", "rss");
+  url.searchParams.set("setlang", "pt-BR");
+  url.searchParams.set("cc", "br");
+  url.searchParams.set("q", query);
+  const response = await fetch(url, { headers: { "user-agent": "DigifyMontaSite/2.0 (+https://imoveis.digify.live/)" } });
+  if (!response.ok) throw new Error(`Bing RSS ${response.status}`);
+  const xml = await response.text();
+  return [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)].map(match => ({
+    title: discoveryXmlValue(match[1], "title"),
+    link: discoveryXmlValue(match[1], "link"),
+    snippet: discoveryXmlValue(match[1], "description"),
+    queryIndex
+  }));
+}
+async function searchSerperDiscovery(query, apiKey, queryIndex) {
+  const response = await fetch("https://google.serper.dev/search", {
+    method: "POST",
+    headers: { "X-API-KEY": apiKey, "content-type": "application/json" },
+    body: JSON.stringify({ q: query, gl: "br", hl: "pt-br", num: 20 })
+  });
+  if (!response.ok) throw new Error(`Serper ${response.status}`);
+  const data = await response.json();
+  return (data.organic || []).map(item => ({ title: text(item.title), link: text(item.link), snippet: text(item.snippet), queryIndex }));
+}
+async function discoverySearch(district, env) {
+  const queries = discoveryQueries(district);
+  const run = env.SERPER_API_KEY
+    ? queries.map((query, index) => searchSerperDiscovery(query, env.SERPER_API_KEY, index))
+    : queries.map((query, index) => searchBingDiscovery(query, index));
+  const settled = await Promise.allSettled(run);
+  return {
+    provider: env.SERPER_API_KEY ? "serper" : "bing-rss",
+    items: settled.flatMap(result => result.status === "fulfilled" ? result.value : [])
+  };
+}
+function discoveryContext(item, district) {
+  const url = safePdfUrl(item.link);
+  if (!url || /(?:^|\.)(?:smallpdf\.com|ilovepdf\.com|adobe\.com|canva\.com)$/.test(url.hostname)) return null;
+  const copy = normalizeSearch(`${item.title} ${item.snippet} ${url.hostname} ${url.pathname}`);
+  const areas = [district, ...(DISTRICT_ALIASES[district] || [])];
+  const matchedArea = areas.find(area => normalizeSearch(area).split(/\s+/).filter(token => token.length > 2).every(token => copy.includes(token)));
+  const hasDistrict = Boolean(matchedArea);
+  const hasRealEstate = /lancamento|empreendimento|residencial|apartamento|studio|incorporadora|construtora|planta|dormitorio|suite|imovel|edificio|unidade|lazer|book/.test(copy);
+  if (!hasDistrict || (!hasRealEstate && !url.pathname.toLowerCase().includes(".pdf"))) return null;
+  let score = 25 + (hasRealEstate ? 18 : 0) + (url.pathname.toLowerCase().includes(".pdf") ? 8 : 0);
+  if (/lancamento|breve lancamento|na planta|em construcao|em obras/.test(copy)) score += 14;
+  if (/book|apresentacao|catalogo|ficha tecnica|memorial|implantacao/.test(copy)) score += 10;
+  if (/202[6-9]|2030/.test(copy)) score += 6;
+  return { ...item, url, copy, matchedArea: matchedArea || district, score: score + Math.max(0, 3 - Number(item.queryIndex || 0)) };
+}
+async function verifyDiscoveryPdf(item) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 9000);
+  try {
+    const response = await fetch(item.url.toString(), { method: "GET", redirect: "follow", signal: controller.signal, headers: { Range: "bytes=0-31", Accept: "application/pdf" } });
+    if (!response.ok || !response.body) return null;
+    const reader = response.body.getReader();
+    const first = await reader.read();
+    await reader.cancel().catch(() => {});
+    const signature = new TextDecoder().decode((first.value || new Uint8Array()).slice(0, 5));
+    const contentType = response.headers.get("content-type") || "";
+    if (signature !== "%PDF-" && !/application\/pdf/i.test(contentType)) return null;
+    const finalUrl = safePdfUrl(response.url) || item.url;
+    return { ...item, url: finalUrl };
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+function discoveryTypes(copy) {
+  const types = [];
+  if (/studio|studios|1 dormitorio|1 dorm\b|1 quarto|1 suite/.test(copy)) types.push("Studio / 1 dormitório");
+  if (/2 dormitorios|2 dorm\b|2 quartos|2 suites/.test(copy)) types.push("2 dormitórios");
+  if (/[34] dormitorios|[34] dorm\b|[34] quartos|[34] suites/.test(copy)) types.push("3 dormitórios ou mais");
+  return types;
+}
+function discoveryRecord(item, district, now) {
+  const phase = /pronto para morar|pronta entrega|entrega imediata|habite.?se|\bentregue\b|\bconcluido\b/.test(item.copy)
+    ? "Pronta entrega"
+    : /lancamento|breve lancamento|na planta|em construcao|em obras/.test(item.copy) ? "Lançamento" : "A confirmar";
+  const year = item.copy.match(/\b(202[6-9]|2030)\b/)?.[1];
+  const fileName = decodeURIComponent(item.url.pathname.split("/").pop() || "material.pdf").slice(0, 180);
+  const rawName = text(item.title, fileName).replace(/\s*[|–—-]\s*(?:pdf|book|download).*$/i, "").replace(/\.pdf\b.*$/i, "").slice(0, 180) || "Material imobiliário";
+  let hash = 2166136261;
+  for (const char of item.url.toString()) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
+  return {
+    id: `daily-${(hash >>> 0).toString(36)}`,
+    name: rawName,
+    bairro: item.matchedArea || district,
+    pdf: fileName,
+    pdfUrl: item.url.toString(),
+    sourceHost: item.url.hostname.replace(/^www\./, ""),
+    phase,
+    delivery: year ? `previsão citada: ${year}` : phase === "Pronta entrega" ? "pronta entrega — confirmar no PDF" : "prazo a confirmar",
+    types: discoveryTypes(item.copy),
+    heat: 50,
+    searches: "a medir",
+    competition: "a medir",
+    verifiedPdf: true,
+    score: item.score,
+    summary: text(item.snippet, `PDF de empreendimento localizado em ${district}; os dados serão confirmados durante a leitura.`).slice(0, 420),
+    firstSeenAt: now,
+    lastSeenAt: now,
+    verifiedAt: now
+  };
+}
+async function discoverDistrict(env, district, index) {
+  if (!env.MONTASITE_AUTH) return { found: 0, provider: "nenhum" };
+  const searched = await discoverySearch(district, env);
+  const unique = new Map();
+  for (const raw of searched.items) {
+    const candidate = discoveryContext(raw, district);
+    if (!candidate) continue;
+    const key = candidate.url.toString().replace(/\/$/, "").toLowerCase();
+    const previous = unique.get(key);
+    if (!previous || candidate.score > previous.score) unique.set(key, candidate);
+  }
+  const candidates = [...unique.values()].sort((a, b) => b.score - a.score).slice(0, DISCOVERY_PROBE_LIMIT);
+  const verified = (await Promise.all(candidates.map(verifyDiscoveryPdf))).filter(Boolean);
+  const now = new Date().toISOString();
+  const existing = await env.MONTASITE_AUTH.get("pdf:catalog", "json") || [];
+  const byUrl = new Map((Array.isArray(existing) ? existing : []).map(item => [String(item.pdfUrl || "").replace(/\/$/, "").toLowerCase(), item]));
+  let found = 0;
+  for (const item of verified) {
+    const record = discoveryRecord(item, district, now);
+    const key = record.pdfUrl.replace(/\/$/, "").toLowerCase();
+    const previous = byUrl.get(key);
+    if (!previous) found++;
+    byUrl.set(key, previous ? { ...previous, ...record, firstSeenAt: previous.firstSeenAt || now, lastSeenAt: now } : record);
+  }
+  const catalog = [...byUrl.values()].sort((a, b) => new Date(b.firstSeenAt || 0) - new Date(a.firstSeenAt || 0) || Number(b.score || 0) - Number(a.score || 0)).slice(0, DISCOVERY_CATALOG_LIMIT);
+  await env.MONTASITE_AUTH.put("pdf:catalog", JSON.stringify(catalog));
+  return { found, verified: verified.length, checked: candidates.length, provider: searched.provider, total: catalog.length, index };
+}
+async function discoverNextDistrict(env) {
+  if (!env.MONTASITE_AUTH) return;
+  const [cursorValue, previousStatus] = await Promise.all([
+    env.MONTASITE_AUTH.get("pdf:discovery:cursor"),
+    env.MONTASITE_AUTH.get("pdf:discovery:status", "json")
+  ]);
+  const rawCursor = Number(cursorValue || 0);
+  const index = Number.isFinite(rawCursor) ? Math.abs(rawCursor) % SAO_PAULO_DISTRICTS.length : 0;
+  const district = SAO_PAULO_DISTRICTS[index];
+  const result = await discoverDistrict(env, district, index);
+  const nextIndex = (index + 1) % SAO_PAULO_DISTRICTS.length;
+  const now = new Date().toISOString();
+  await env.MONTASITE_AUTH.put("pdf:discovery:cursor", String(nextIndex));
+  await env.MONTASITE_AUTH.put("pdf:discovery:status", JSON.stringify({
+    lastRunAt: now,
+    lastCompletedCycleAt: nextIndex === 0 ? now : previousStatus?.lastCompletedCycleAt || null,
+    currentDistrict: district,
+    nextDistrict: SAO_PAULO_DISTRICTS[nextIndex],
+    districtIndex: index + 1,
+    districtCount: SAO_PAULO_DISTRICTS.length,
+    foundInLastRun: result.found,
+    verifiedInLastRun: result.verified,
+    checkedInLastRun: result.checked,
+    totalCatalogued: result.total,
+    provider: result.provider
+  }));
+  console.log("MontaSite PDF discovery", JSON.stringify({ district, ...result }));
+}
 async function processDueArticles(env) {
   if (!env.MONTASITE_AUTH) return;
   const listed = await env.MONTASITE_AUTH.list({ prefix: "job:", limit: 100 });
@@ -454,9 +694,16 @@ async function processDueArticles(env) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    if (request.method !== "POST" || url.pathname !== "/run") return json({ ok: false }, 404);
+    if (request.method !== "POST" || !["/run", "/discover"].includes(url.pathname)) return json({ ok: false }, 404);
     if (!env.MONTASITE_PIPELINE_SECRET) return json({ ok: false, error: "Pipeline secret não configurado." }, 503);
     if (request.headers.get("authorization") !== "Bearer " + env.MONTASITE_PIPELINE_SECRET) return json({ ok: false, error: "Não autorizado." }, 401);
+    if (url.pathname === "/discover") {
+      let input = {};
+      try { input = await request.json(); } catch { /* corpo opcional */ }
+      const requested = Math.min(8, Math.max(1, Number(input.count) || 1));
+      ctx.waitUntil((async () => { for (let index = 0; index < requested; index++) await discoverNextDistrict(env); })());
+      return json({ ok: true, accepted: true, districtsQueued: requested }, 202);
+    }
     let input;
     try { input = await request.json(); } catch { return json({ ok: false, error: "Payload inválido." }, 400); }
     if (!input?.jobId || !input?.payload || !input?.callbackUrl) return json({ ok: false, error: "Job, payload e callback são obrigatórios." }, 422);
@@ -464,6 +711,7 @@ export default {
     return json({ ok: true, accepted: true, jobId: input.jobId }, 202);
   },
   async scheduled(_controller, env, ctx) {
-    ctx.waitUntil(processDueArticles(env));
+    ctx.waitUntil(Promise.allSettled([processDueArticles(env), discoverNextDistrict(env)]));
   }
 };
+

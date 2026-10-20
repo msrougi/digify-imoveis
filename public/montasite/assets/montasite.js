@@ -15,7 +15,7 @@
   ];
   const labels=["Gelado","Frio","Morno","Quente","Fervendo"], colors=["#5b8cff","#36b9db","#f0c84b","#ff8a45","#ff4f71"];
   const $=selector=>document.querySelector(selector), $$=selector=>[...document.querySelectorAll(selector)];
-  const form=$("#site-form"), bairro=$("#bairro"), pdfList=$("#pdf-list"), upload=$("#pdf-upload"), slug=$("#slug"), output=$("#output"), promptEl=$("#prompt");
+  const form=$("#site-form"), bairro=$("#bairro"), pdfList=$("#pdf-list"), recentPdfList=$("#recent-pdf-list"), upload=$("#pdf-upload"), slug=$("#slug"), output=$("#output"), promptEl=$("#prompt");
   let current=null, selectedFile=null, resolvedPdfFile=null, pendingCatalogItem=null, currentIdeas=[], pollTimer=null, renderedEvents=0, pdfJsPromise=null, imageRun=0;
   let propertyImages=[];
   const photoState=[null,null,null];
@@ -43,13 +43,26 @@
     pdfList.innerHTML=results.length?results.map((item,index)=>`<button class="pdf-result-card" type="button" role="listitem" data-index="${index}" aria-pressed="false"><span class="pdf-badge">PDF</span><span class="pdf-result-copy"><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.phase||selectedPhase())} · ${escapeHtml(item.delivery||"prazo a confirmar")} · ${escapeHtml(item.sourceHost||"Acervo Digify")}</small><span>${escapeHtml(item.summary||"Os dados serão confirmados durante a leitura.")}</span></span><em>Selecionar ↗</em></button>`).join(""):'<p class="pdf-empty">Nenhum PDF confirmou bairro, tipologia e fase. Você pode enviar o material manualmente abaixo.</p>';
   }
 
+  function formatDiscoveryDate(value){if(!value)return"aguardando primeira varredura";const date=new Date(value);return Number.isNaN(date.getTime())?"data indisponível":date.toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"});}
+  function renderRecentPdfs(items,monitor,total){
+    recentPdfList._results=items;
+    recentPdfList.innerHTML=items.length?items.map((item,index)=>`<button class="pdf-result-card recent-pdf-card" type="button" role="listitem" data-recent-index="${index}" aria-pressed="false"><span class="pdf-badge">NOVO</span><span class="pdf-result-copy"><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.bairro)} · ${escapeHtml(item.phase||"A confirmar")} · ${escapeHtml(item.sourceHost||"fonte verificada")}</small><span>${escapeHtml(item.summary||"PDF validado pelo monitor diário.")}</span><time>${escapeHtml(formatDiscoveryDate(item.firstSeenAt))}</time></span><em>Usar PDF ↗</em></button>`).join(""):'<p class="pdf-empty">O monitor ainda está formando o catálogo. A busca por bairro continua disponível abaixo.</p>';
+    const status=$("#recent-pdfs-status");
+    status.textContent=monitor?`${total||items.length} PDFs validados · última checagem ${formatDiscoveryDate(monitor.lastRunAt)} · próximo: ${monitor.nextDistrict||"—"}`:`${total||items.length} PDFs validados · monitor aguardando a primeira execução`;
+  }
+  async function loadLatestPdfs(){
+    const button=$("#refresh-recent-pdfs");button.disabled=true;button.textContent="Atualizando…";
+    try{const response=await fetch("/api/property-pdf-catalog?limit=20");const data=await response.json();if(!response.ok)throw new Error(data.error||"Não foi possível carregar o catálogo.");renderRecentPdfs(data.items||[],data.monitor,data.totalCatalogued);(data.items||[]).forEach(item=>{if(![...$("#bairros").options].some(option=>normalize(option.value)===normalize(item.bairro))){const option=document.createElement("option");option.value=item.bairro;$("#bairros").append(option);}});}
+    catch(error){recentPdfList.innerHTML=`<p class="pdf-empty">${escapeHtml(error.message)} A busca manual continua disponível.</p>`;$("#recent-pdfs-status").textContent="Catálogo temporariamente indisponível";}
+    finally{button.disabled=false;button.textContent="Atualizar ↻";}
+  }
+
   async function searchPdfs(){
     if(!bairro.value.trim()){bairro.reportValidity();return;}
     $("#search-pdfs").disabled=true;$("#search-pdfs span").textContent="Pesquisando várias fontes…";addLog(`Iniciando multibusca de PDFs em ${bairro.value}, ${selectedType()}, fase ${selectedPhase()}…`);let remote=[];
-    try{const response=await fetch(`/api/property-pdfs?bairro=${encodeURIComponent(bairro.value)}&tipologia=${encodeURIComponent(selectedType())}&fase=${encodeURIComponent(selectedPhase())}`);const data=await response.json();if(response.ok){remote=data.items||[];if(data.connected)addLog(`${data.queriesRun||1} buscas concluídas; ${data.candidatesChecked||remote.length} candidatos confirmaram os três critérios.`);}else addLog(data.error||"A busca externa não respondeu.","warning");}
-    catch{addLog("A busca externa falhou; exibindo também o acervo Digify.","warning");}
-    const term=normalize(bairro.value), local=catalog.filter(item=>selectedPhase()==="Lançamento"&&(normalize(item.bairro).includes(term)||term.includes(normalize(item.bairro)))&&item.types.includes(selectedType())).map(item=>({...item,phase:"Lançamento"}));
-    const results=[...local,...remote.filter(item=>!local.some(localItem=>normalize(localItem.name)===normalize(item.name)))];
+    try{const response=await fetch(`/api/property-pdfs?bairro=${encodeURIComponent(bairro.value)}&tipologia=${encodeURIComponent(selectedType())}&fase=${encodeURIComponent(selectedPhase())}`);const data=await response.json();if(response.ok){remote=(data.items||[]).filter(item=>item.pdfUrl);if(data.connected)addLog(`${data.queriesRun||0} buscas ao vivo, ${data.catalogMatches||0} achado(s) no catálogo e ${data.liveMatches||0} novo(s) PDF(s) validado(s).`);}else addLog(data.error||"A busca externa não respondeu.","warning");}
+    catch{addLog("A busca externa falhou; tente novamente ou envie um PDF manualmente.","warning");}
+    const results=remote;
     renderPdfCards(results);$("#pdf-results").hidden=false;addLog(results.length?`${results.length} material(is) organizado(s) por relevância para você comparar.`:"Nenhum PDF compatível foi confirmado. Você pode enviar o material manualmente.",results.length?"info":"warning");$("#search-pdfs").disabled=false;$("#search-pdfs span").textContent="Buscar PDFs compatíveis";
   }
 
@@ -116,9 +129,20 @@
     }catch(error){if(run!==imageRun)return;clearPropertyImages();imageStatus("Não foi possível preparar imagens.",error.message,"error");addLog(error.message,"error");updateCreateState();}
   }
   function selectProperty(item,file=null){current=item;selectedFile=file;slug.value=slugify(item.name);$("#project-section").hidden=false;$("#property-images-section").hidden=false;$("#testimonials-section").hidden=false;$("#articles-section").hidden=false;renderHeat(item);renderIdeas(item);updateCreateState();requestLiveInsights(item);preparePropertyImages(item,file,++imageRun);}
-  pdfList.addEventListener("click",event=>{const button=event.target.closest(".pdf-result-card");if(!button)return;const item=(pdfList._results||[])[Number(button.dataset.index)];if(!item)return;$$('.pdf-result-card').forEach(card=>{card.classList.toggle("selected",card===button);card.setAttribute("aria-pressed",card===button?"true":"false");});upload.value="";upload.closest(".upload").classList.remove("has-file");if(!item.pdfUrl){pendingCatalogItem=item;addLog(`${item.name} está no acervo de referência. Selecione agora o PDF original salvo no seu computador.`);upload.click();return;}pendingCatalogItem=null;selectProperty(item);addLog(`${item.name} selecionado para leitura e criação.`);});
+  function selectFoundPdf(item,button){
+    if(!item?.pdfUrl){addLog("Este resultado não possui uma URL de PDF validada. Use o botão “Enviar outro PDF” somente se o arquivo estiver no seu computador.","warning");return;}
+    bairro.value=item.bairro||bairro.value;
+    const wantedType=(item.types||[]).find(type=>["Studio / 1 dormitório","2 dormitórios","3 dormitórios ou mais"].includes(type));
+    if(wantedType){const radio=form.querySelector(`input[name="tipologia"][value="${wantedType}"]`);if(radio)radio.checked=true;}
+    if(["Lançamento","Pronta entrega"].includes(item.phase)){const radio=form.querySelector(`input[name="fase"][value="${item.phase}"]`);if(radio)radio.checked=true;}
+    $$('.pdf-result-card').forEach(card=>{card.classList.toggle("selected",card===button);card.setAttribute("aria-pressed",card===button?"true":"false");});
+    upload.value="";upload.closest(".upload").classList.remove("has-file");pendingCatalogItem=null;selectProperty(item);addLog(`${item.name} selecionado. O PDF remoto será aberto diretamente, sem solicitar arquivo local.`);
+  }
+  pdfList.addEventListener("click",event=>{const button=event.target.closest("[data-index]");if(!button)return;selectFoundPdf((pdfList._results||[])[Number(button.dataset.index)],button);});
+  recentPdfList.addEventListener("click",event=>{const button=event.target.closest("[data-recent-index]");if(!button)return;selectFoundPdf((recentPdfList._results||[])[Number(button.dataset.recentIndex)],button);});
   upload.addEventListener("change",()=>{const file=upload.files[0];if(!file)return;if(file.type!=="application/pdf"||file.size>25*1024*1024){alert("Envie um PDF de até 25 MB.");upload.value="";return;}upload.closest(".upload").classList.add("has-file");upload.closest(".upload").querySelector("strong").textContent=`✓ ${file.name}`;const item=pendingCatalogItem?{...pendingCatalogItem,pdf:file.name,pdfUrl:null}:{id:"upload",name:file.name.replace(/\.pdf$/i,""),bairro:bairro.value,pdf:file.name,pdfUrl:null,phase:selectedPhase(),delivery:selectedPhase()==="Pronta entrega"?"pronta entrega — confirmar no PDF":"a confirmar",types:[selectedType()],heat:50,searches:"a medir",competition:"a medir",summary:"Material enviado manualmente; bairro, tipologia e fase serão confirmados durante a leitura."};pendingCatalogItem=null;selectProperty(item,file);});
   $("#search-pdfs").addEventListener("click",searchPdfs);
+  $("#refresh-recent-pdfs").addEventListener("click",loadLatestPdfs);
   form.querySelectorAll('input[name="tipologia"],input[name="fase"]').forEach(input=>input.addEventListener("change",()=>{$("#pdf-results").hidden=true;$("#project-section").hidden=true;$("#property-images-section").hidden=true;$("#testimonials-section").hidden=true;$("#articles-section").hidden=true;current=null;selectedFile=null;imageRun++;clearPropertyImages();updateCreateState();}));
 
   function renderHeat(item,live){const score=live?.score??item.heat??50,index=heatIndex(score),orb=$("#heat-orb");orb.style.setProperty("--score",score);orb.style.setProperty("--heat",colors[index]);$("#heat-score").textContent=score;$("#heat-label").textContent=labels[index];$("#heat-summary").textContent=live?.summary||item.summary;$$('.heat-scale span').forEach((span,i)=>span.classList.toggle("active",i===index));$("#m-searches").textContent=live?.monthlySearches??item.searches;$("#m-competition").textContent=live?.competition??item.competition;$("#m-impressions").textContent=live?.impressions??"sem dados";$("#m-position").textContent=live?.position?Number(live.position).toFixed(1):"sem dados";$("#data-source").textContent=live?`Google · ${new Date(live.collectedAt||Date.now()).toLocaleDateString("pt-BR")}`:"Estimativa Digify · conectar Google para dados reais";}
@@ -166,4 +190,6 @@
   $("#clear-log").addEventListener("click",()=>$("#log-lines").replaceChildren());
   $("#logout").addEventListener("click",async()=>{await fetch("/api/montasite-auth/logout",{method:"POST"});location.replace("/montasite/login/");});
   const dialog=$("#google-dialog");$("#connect-google").addEventListener("click",()=>dialog.showModal());dialog.querySelectorAll(".dialog-close,.dialog-action").forEach(button=>button.addEventListener("click",()=>dialog.close()));
+  loadLatestPdfs();
 })();
+
